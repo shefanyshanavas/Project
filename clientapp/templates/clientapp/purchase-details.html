@@ -1,0 +1,336 @@
+{% load static %}
+{% include 'header.html' %}
+<script type="text/javascript"
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC5Jrp9PtHe0WapppUzxbIpMDWMAcV3qE4"></script>
+<script src="https://unpkg.com/location-picker/dist/location-picker.min.js"></script>
+<!-- Page Header Start -->
+<div class="container-fluid page-header mb-5 p-0" style="background-image: url(img/carousel-bg-2.jpg);">
+    <div class="container-fluid page-header-inner py-5">
+        <div class="container text-center">
+            <h1 class="display-3 text-white mb-3 animated slideInDown">Purchase</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb justify-content-center text-uppercase">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#">Pages</a></li>
+                    <li class="breadcrumb-item text-white active" aria-current="page">Purchase details</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+<!-- Page Header End -->
+
+<div class="row p-5 py-5 wow fadeInUp" data-wow-delay="0.1s">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="main-img">
+                <img class="img-fluid" src="{% static 'image/sales_bikes/'%}{{payload.26.0.0}}"
+                    alt="{{payload.26.0.0}}">
+                <div class="row my-3 previews">
+                    {% for key in payload.26 %}
+                    <div class="col-md-3">
+                        <img class="w-100" src="{% static 'image/sales_bikes/'%}{{key.0}}" alt="{{key.0}}">
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="row my-3 previews p-3">
+                    <label for="" class="mb-2 mt-2">Your location :</label>
+                    <div id="map" aria-disabled="false"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div class="main-description px-2">
+                <div>
+
+                </div>
+                <div class="category text-bold mb-2">
+                    <img class="img-fluid" src="{{payload.20}}" alt="{{payload.20}}"
+                        style="width: 100px;border:2px solid">
+                </div>
+                <div class="category text-bold">
+
+                </div>
+                <div class="product-title text-bold my-3">
+                    {{payload.15}} {{payload.19}}
+                </div>
+                <div class="price-area my-4">
+                    <!-- <p class="old-price mb-1"><del>$100</del> <span class="old-price-discount text-danger">(20%
+                            off)</span></p> -->
+                    <p class="new-price text-bold mb-2 text-primary"> ₹ {{payload.18}}</p>
+                    {% if payload.14 == 0 %} <p class="text-secondary mb-1">(Additional tax may apply
+                        on checkout)</p>
+                    <a href="" href="/pay-service-fee/{{payload.0}}" class="btn btn-warning">PAY</a>
+                    {% else %}
+                    <span class="badge bg-success">Paid</span>
+                    {% endif %}
+                </div>
+
+                <div class="buttons d-flex my-5">
+                    {% if payload.12 == 0 %}
+                    <span style="background-color: skyblue; " class="text-light badge">booking
+                        recived</span>
+                    {% elif payload.12 == 1 %}
+                    <span style="background-color: yellow; " class="text-dark badge">
+                        booking confirmed not
+                        delived</span>
+                    {% elif payload.12 == 2 %}
+                    <span style="background-color: orangered; " class="text-light badge">delivered and
+                        completed</span>
+                    {% elif payload.12 == 3 %}
+                    <span style="background-color: chocolate; " class="text-light badge">cancelled by
+                        user</span>
+                    {% elif payload.12 == 4 %}
+                    <span style="background-color: lightgreen; " class="text-dark badge">cancelled by
+                        service
+                        center</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="buttons d-flex my-5">
+                {% if payload.12 == 0 %}
+                <button onclick="cancellService('{{key.0}}')" class="btn btn-danger">X</button>
+                {% endif %}
+            </div>
+
+
+            <div class="row questions product-details bg-light p-3 mt-3">
+                <p class="details-title text-color mb-2">Billing Details</p>
+                <address>Billing name : <b>{{ payload.13 }}</b></address>
+                <address class="mt-2">Billing Address : <b>{{ payload.2 }},{{ payload.3 }} </b>
+                </address>
+                <!-- <p class="description">{{payload.2}}</p> -->
+                <p>Phone : <b>{{ payload.4 }}</b></p>
+            </div>
+
+            <div class="row questions product-details bg-light p-3 mt-3">
+                <p class="details-title text-color mb-2">Shop Details</p>
+                <address>Bussiness name : <b>{{ payload.20 }}</b></address>
+                <address class="mt-2">Bussiness Address : <b>{{ payload.21 }}, {{ payload.24 }}, {{ payload.25 }} </b>
+                </address>
+                <!-- <p class="description">{{payload.2}}</p> -->
+                <p>Phone : <b>{{ payload.22 }}</b></p>
+                <p>Email : <b>{{ payload.23 }}</b></p>
+
+            </div>
+
+
+            <div class="delivery my-2 mt-4">
+                <p class="font-weight-bold mb-0"><span><i class="fa-solid fa-truck"></i></span> <b>Purchased
+                        on</b>
+                </p>
+                <p class="text-primary">{{payload.11}}</p>
+            </div>
+            <div class="delivery my-2 mt-4">
+                <p class="font-weight-bold mb-0"><span><i class="fa-solid fa-truck"></i></span> <b>Expected
+                        delivery
+                        on</b> </p>
+                <p class="text-primary">{{payload.10}}</p>
+            </div>
+            <div class="row questions product-details bg-light p-3 mt-3">
+                <p class="details-title text-color mb-2">Documents submitted</p>
+                <p>Aadhar No : <b>{{payload.6}} </b></p>
+                <p>Signature : <img class="w-50" src="{% static 'image/signature_img/' %}{{payload.7}}"
+                        alt="{{payload.7}}"></p>
+                <p>Addhar : <img class="w-50" src="{% static 'image/aadhar_img/' %}{{payload.8}}" alt="{{payload.8}}">
+                </p>
+                <p>Signature : <img class="w-50" src="{% static 'image/other_proofs/' %}{{payload.9}}"
+                        alt="{{payload.9}}"></p>
+            </div>
+
+            <div class="delivery-options my-2 mt-4">
+                <p class="font-weight-bold mb-2"><span><i class="fa-solid fa-filter"></i></span> <b>Booking
+                        type</b>
+                </p>
+                {% if data.5 == 0 %}
+                <span style="background-color: lightcoral; " class="text-light badge">Advance paid, cash on
+                    delivery</span>
+                {% else %}
+                <span style="background-color: crimson; " class="text-light badge">Online Paid full
+                    amount</span>
+                {% endif %}
+                <p class="description mt-4">Paid amount : <b> ₹{{payload.16}}</b></p>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+{% include 'footer.html' %}
+
+<script>
+    var map = document.getElementById('map');
+
+    // Initialize LocationPicker plugin
+    var lp = new locationPicker(map, {
+        setCurrentPosition: true, // You can omit this, defaults to true
+        lat: '{{payload.3}}' == '' ? 10.0040704 : '{{payload.3}}',
+        lng: '{{payload.4}}' == '' ? 76.2740736 : '{{payload.4}}'
+    }, {
+        zoom: 15 // You can set any google map options here, zoom defaults to 15
+    });
+    function cancellService(serviceBookid) {
+        if (serviceBookid != null) {
+            invokeAjax({
+                'action': 14,
+                'userStatus': 3,
+                'serviceBookid': serviceBookid
+            })
+        }
+    }
+    function invokeAjax(data) {
+        $.ajax({
+            headers: { "X-CSRFToken": '{{csrf_token}}' },
+            type: "POST",
+            url: "/api-register/",
+            data: data,
+            success: (response) => {
+                response = JSON.parse(response)
+                if (response.status == 1) {
+                    swal('Success', response.msg, 'success', 'OK');
+                    setTimeout(() => {
+                        location.reload()
+                    }, 1500);
+                } else {
+                    swal('Error', response.msg, 'error', 'Close');
+                }
+            },
+
+        });
+    }
+
+    function swal(title, text, icon, btnText) {
+        Swal.fire({
+            'title': title,
+            'text': text,
+            'icon': icon,
+            'confirmButtonText': btnText
+        })
+    }
+
+</script>
+<style>
+    #map {
+        width: 100%;
+        height: 480px;
+        pointer-events: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+
+    .badge {
+
+        padding: 10px 15px;
+        font-size: 15px;
+    }
+
+    .text-bold {
+        font-weight: 800;
+    }
+
+    text-color {
+        color: #0093c4;
+    }
+
+    /* Main image - left */
+    .main-img img {
+        width: 100%;
+    }
+
+    /* Preview images */
+    .previews img {
+        width: 100%;
+        height: 150px;
+    }
+
+    .main-description .category {
+        text-transform: uppercase;
+        color: #0093c4;
+    }
+
+    .main-description .product-title {
+        font-size: 2.5rem;
+    }
+
+    .old-price-discount {
+        font-weight: 600;
+    }
+
+    .new-price {
+        font-size: 1rem;
+    }
+
+    .details-title {
+        text-transform: uppercase;
+        font-weight: 600;
+        font-size: 1.2rem;
+        color: #757575;
+    }
+
+    .buttons .block {
+        margin-right: 5px;
+    }
+
+    .quantity input {
+        border-radius: 0;
+        height: 40px;
+
+    }
+
+
+    .custom-btn {
+        text-transform: capitalize;
+        background-color: #0093c4;
+        color: white;
+        width: 150px;
+        height: 40px;
+        border-radius: 0;
+    }
+
+    .custom-btn:hover {
+        background-color: #0093c4 !important;
+        font-size: 18px;
+        color: white !important;
+    }
+
+    .similar-product img {
+        height: 400px;
+    }
+
+    .similar-product {
+        text-align: left;
+    }
+
+    .similar-product .title {
+        margin: 17px 0px 4px 0px;
+    }
+
+    .similar-product .price {
+        font-weight: bold;
+    }
+
+    .questions .icon i {
+        font-size: 2rem;
+    }
+
+    .questions-icon {
+        font-size: 2rem;
+        color: #0093c4;
+    }
+
+
+    /* Small devices (landscape phones, less than 768px) */
+    @media (max-width: 767.98px) {
+
+        /* Make preview images responsive  */
+        .previews img {
+            width: 100%;
+            height: auto;
+        }
+
+    }
+</style>

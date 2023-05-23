@@ -1,0 +1,422 @@
+{% load static %}
+{% include 'service_header.html' %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'admin/vendor/datatables/css/dataTables.bootstrap4.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'admin/vendor/datatables/css/buttons.bootstrap4.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'admin/vendor/datatables/css/select.bootstrap4.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'admin/vendor/datatables/css/fixedHeader.bootstrap4.css' %}">
+<script type="text/javascript"
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC5Jrp9PtHe0WapppUzxbIpMDWMAcV3qE4"></script>
+<script src="https://unpkg.com/location-picker/dist/location-picker.min.js"></script>
+<!-- ============================================================== -->
+<!-- wrapper  -->
+<!-- ============================================================== -->
+<div class="dashboard-wrapper">
+    <div class="dashboard-ecommerce">
+        <div class="container-fluid dashboard-content ">
+            <!-- ============================================================== -->
+            <!-- pageheader  -->
+            <!-- ============================================================== -->
+            <div class="row mt-5">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-5">
+                    <div class="page-header">
+                        <h2 class="pageheader-title">MotoLogic</h2>
+                        <p class="pageheader-text">Nulla euismod urna eros, sit amet scelerisque torton lectus
+                            vel mauris facilisis faucibus at enim quis massa lobortis rutrum.</p>
+                        <div class="page-breadcrumb">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">View purchase details</li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ============================================================== -->
+            <!-- end pageheader  -->
+            <!-- ============================================================== -->
+            <div class="ecommerce-widget">
+
+                <div class="row">
+
+                    <div class="col-md-5">
+                        <div class="main-img">
+                            <div class="row my-3 previews">
+                                {% for key in payload.24 %}
+
+                                <div class="col-md-3">
+                                    <img class="w-100" src="{% static 'image/sales_bikes/'%}{{key.0}}" alt="{{key.0}}">
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <div class="row my-3 previews p-3">
+                                <label for="" class="mb-2 mt-2">Customer location :</label>
+                                <div id="map" aria-disabled="false"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="main-description px-2">
+                            <div>
+
+                            </div>
+
+                            <div class="category text-bold">
+                                Bike : {{payload.15}}, {{payload.19}}
+                            </div>
+
+                            <div class="price-area my-4">
+                                <!-- <p class="old-price mb-1"><del>$100</del> <span class="old-price-discount text-danger">(20%
+                                                off)</span></p> -->
+                                <p class="new-price text-bold mb-2">price: ₹ {{payload.18}}</p>
+                                {% if payload.12 == 0 %}
+                                <span style="background-color: red;margin-top: 5px; " class="text-light badge">Not
+                                    paid</span>
+                                {% else %}
+                                <span style="background-color: green;margin-top: 5px; "
+                                    class="text-light badge">Paid</span>
+                                {% endif %}
+                            </div>
+
+
+
+                            <div class="buttons d-flex my-5">
+                                {% if payload.12 == 0 %}
+                                <span style="background-color: skyblue; " class="text-light badge">booking
+                                    recived</span>
+                                {% elif payload.12 == 1 %}
+                                <span style="background-color: yellow; " class="text-dark badge">
+                                    booking confirmed not
+                                    delived</span>
+                                {% elif payload.12 == 2 %}
+                                <span style="background-color: orangered; " class="text-light badge">delivered and
+                                    completed</span>
+                                {% elif payload.12 == 3 %}
+                                <span style="background-color: chocolate; " class="text-light badge">cancelled by
+                                    user</span>
+                                {% elif payload.12 == 4 %}
+                                <span style="background-color: lightgreen; " class="text-dark badge">cancelled by
+                                    service
+                                    center</span>
+                                {% endif %}
+                            </div>
+                            <div class="buttons d-flex my-5">
+                                {% if payload.12 == 0 %}
+                                <button type="button" class="btn btn-xs btn-info mb-1"
+                                    onclick='acceptService("{{ data.0 }}")'>Confirm</button><br>
+                                <button type="button" class="btn btn-xs btn-danger mb-1"
+                                    onclick='rejectService("{{ data.0 }}")'>Reject</button><br>
+                                {% endif %}
+                                {% if payload.12 == 1 %}
+                                <button type="button" class="btn btn-xs btn-success mb-1"
+                                    onclick='deliverBike("{{ data.0 }}")'>Deliver bike</button><br>
+                                {% endif %}
+
+                            </div>
+                        </div>
+                        <div class="product-details my-4">
+                            <p class="details-title text-color mb-2">Customer Details</p>
+                            name : <b>{{ payload.20 }}</b>
+                            <address class="mt-2">Address : <b>{{ payload.23 }} </b>
+                            </address>
+                            <!-- <p class="description">{{payload.2}}</p> -->
+                            <p>Phone : <b>{{ payload.22 }}</b></p>
+                            <p>Email : <b>{{ payload.21 }}</b></p>
+                        </div>
+                        <div class="product-details my-4">
+                            <p class="details-title text-color mb-2">Billing Details</p>
+                            name : <b>{{ payload.13 }}</b>
+                            <address class="mt-2">Address : <b>{{ payload.2 }},{{ payload.3 }} </b>
+                            </address>
+                            <!-- <p class="description">{{payload.2}}</p> -->
+                            <p>Phone : <b>{{ payload.4 }}</b></p>
+
+                        </div>
+
+
+                        <div class="delivery my-2 mt-4">
+                            <p class="font-weight-bold mb-0"><span><i class="fa-solid fa-truck"></i></span> <b>Purchased
+                                    on</b>
+                            </p>
+                            <p class="text-secondary">{{payload.10}}</p>
+                        </div>
+                        <div class="delivery my-2 mt-4">
+                            <p class="font-weight-bold mb-0"><span><i class="fa-solid fa-truck"></i></span> <b>Expected
+                                    delivery
+                                    on</b> </p>
+                            <p class="text-secondary">{{payload.11}}</p>
+                        </div>
+                        <div class="product-details my-4 mt-4">
+                            <p class="details-title text-color mb-2">Documents submitted</p>
+                            <p>Aadhar No : <b>{{payload.6}} </b></p>
+                            <p>Signature : <img class="w-50" src="{% static 'image/signature_img/' %}{{payload.7}}"
+                                    alt="{{payload.7}}"></p>
+                            <p>Addhar : <img class="w-50" src="{% static 'image/aadhar_img/' %}{{payload.8}}"
+                                    alt="{{payload.8}}"></p>
+                            <p>Signature : <img class="w-50" src="{% static 'image/other_proofs/' %}{{payload.9}}"
+                                    alt="{{payload.9}}"></p>
+                        </div>
+
+                        <div class="delivery-options my-2 mt-4">
+                            <p class="font-weight-bold mb-2"><span><i class="fa-solid fa-filter"></i></span> <b>Booking
+                                    type</b>
+                            </p>
+                            {% if data.5 == 0 %}
+                            <span style="background-color: lightcoral; " class="text-light badge">Advance paid, cash on
+                                delivery</span>
+                            {% else %}
+                            <span style="background-color: crimson; " class="text-light badge">Online Paid full
+                                amount</span>
+                            {% endif %}
+                            <p class="description mt-4">Paid amount : <b> ₹{{payload.16}}</b></p>
+                        </div>
+
+
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- footer -->
+    <!-- ============================================================== -->
+    <div class="footer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    Copyright © 2018 Concept. All rights reserved. Dashboard by <a
+                        href="https://colorlib.com/wp/">Colorlib</a>.
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="text-md-right footer-links d-none d-sm-block">
+                        <a href="javascript: void(0);">About</a>
+                        <a href="javascript: void(0);">Support</a>
+                        <a href="javascript: void(0);">Contact Us</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- end footer -->
+    <!-- ============================================================== -->
+</div>
+<!-- ============================================================== -->
+<!-- end wrapper  -->
+<!-- ============================================================== -->
+{% include 'service_footer.html' %}
+<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script src="{% static 'admin/vendor/datatables/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
+<script src="{% static 'admin/vendor/datatables/js/buttons.bootstrap4.min.js' %}"></script>
+<script src="{% static 'admin/vendor/datatables/js/data-table.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.colVis.min.js"></script>
+<script src="https://cdn.datatables.net/rowgroup/1.0.4/js/dataTables.rowGroup.min.js"></script>
+<script src="https://cdn.datatables.net/select/1.2.7/js/dataTables.select.min.js"></script>
+<script src="https://cdn.datatables.net/fixedheader/3.1.5/js/dataTables.fixedHeader.min.js"></script>
+
+<script>
+
+
+    var map = document.getElementById('map');
+
+    // Initialize LocationPicker plugin
+    var lp = new locationPicker(map, {
+        setCurrentPosition: true, // You can omit this, defaults to true
+        lat: '{{payload.3}}' == '' ? 10.0040704 : '{{payload.3}}',
+        lng: '{{payload.4}}' == '' ? 76.2740736 : '{{payload.4}}'
+    }, {
+        zoom: 15 // You can set any google map options here, zoom defaults to 15
+    });
+
+    function acceptService(purchaseID) {
+        if (purchaseID != null) {
+            invokeAjax({
+                'action': 24,
+                'purchaseID': purchaseID
+            })
+        }
+    }
+
+    function deliverBike(purchaseID) {
+        if (purchaseID != null) {
+            invokeAjax({
+                'action': 26,
+                'purchaseID': purchaseID
+            })
+        }
+    }
+
+    function rejectService(purchaseID) {
+        if (purchaseID != null) {
+            invokeAjax({
+                'action': 25,
+                'purchaseID': purchaseID
+            })
+        }
+    }
+
+
+    function invokeAjax(data) {
+        $.ajax({
+            headers: { "X-CSRFToken": '{{csrf_token}}' },
+            type: "POST",
+            url: "/service-api/api-register/",
+            data: data,
+            success: (response) => {
+                response = JSON.parse(response)
+                if (response.status == 1) {
+                    swal('Success', response.msg, 'success', 'OK');
+                    setTimeout(() => {
+                        location.reload()
+                    }, 1000)
+                } else {
+                    swal('Error', response.msg, 'error', 'Close');
+                }
+            },
+
+        });
+    }
+
+    function swal(title, text, icon, btnText) {
+        Swal.fire({
+            'title': title,
+            'text': text,
+            'icon': icon,
+            'confirmButtonText': btnText
+        })
+    }
+</script>
+<style>
+    #map {
+        width: 100%;
+        height: 480px;
+        pointer-events: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+
+    .badge {
+
+        padding: 10px 15px;
+        font-size: 15px;
+    }
+
+    .text-bold {
+        font-weight: 800;
+    }
+
+    text-color {
+        color: #0093c4;
+    }
+
+    /* Main image - left */
+    .main-img img {
+        width: 100%;
+    }
+
+    /* Preview images */
+    .previews img {
+        width: 100%;
+        height: 150px;
+    }
+
+    .main-description .category {
+        text-transform: uppercase;
+        color: #0093c4;
+    }
+
+    .main-description .product-title {
+        font-size: 2.5rem;
+    }
+
+    .old-price-discount {
+        font-weight: 600;
+    }
+
+    .new-price {
+        font-size: 1rem;
+    }
+
+    .details-title {
+        text-transform: uppercase;
+        font-weight: 600;
+        font-size: 1.2rem;
+        color: #757575;
+    }
+
+    .buttons .block {
+        margin-right: 5px;
+    }
+
+    .quantity input {
+        border-radius: 0;
+        height: 40px;
+
+    }
+
+
+    .custom-btn {
+        text-transform: capitalize;
+        background-color: #0093c4;
+        color: white;
+        width: 150px;
+        height: 40px;
+        border-radius: 0;
+    }
+
+    .custom-btn:hover {
+        background-color: #0093c4 !important;
+        font-size: 18px;
+        color: white !important;
+    }
+
+    .similar-product img {
+        height: 400px;
+    }
+
+    .similar-product {
+        text-align: left;
+    }
+
+    .similar-product .title {
+        margin: 17px 0px 4px 0px;
+    }
+
+    .similar-product .price {
+        font-weight: bold;
+    }
+
+    .questions .icon i {
+        font-size: 2rem;
+    }
+
+    .questions-icon {
+        font-size: 2rem;
+        color: #0093c4;
+    }
+
+
+    /* Small devices (landscape phones, less than 768px) */
+    @media (max-width: 767.98px) {
+
+        /* Make preview images responsive  */
+        .previews img {
+            width: 100%;
+            height: auto;
+        }
+
+    }
+</style>

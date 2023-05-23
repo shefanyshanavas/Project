@@ -1,0 +1,200 @@
+{% load static %}
+{% include 'service_header.html' %}
+
+<!-- ============================================================== -->
+<!-- wrapper  -->
+<!-- ============================================================== -->
+<div class="dashboard-wrapper mt-4">
+    <div class="dashboard-ecommerce">
+        <div class="container-fluid dashboard-content ">
+            <!-- ============================================================== -->
+            <!-- pageheader  -->
+            <!-- ============================================================== -->
+            <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="page-header">
+                        <h2 class="pageheader-title">MotoLogic</h2>
+                        <p class="pageheader-text">Nulla euismod urna eros, sit amet scelerisque torton lectus
+                            vel mauris facilisis faucibus at enim quis massa lobortis rutrum.</p>
+                        <div class="page-breadcrumb">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">Add new service</li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ============================================================== -->
+            <!-- end pageheader  -->
+            <!-- ============================================================== -->
+            <div class="ecommerce-widget">
+
+                <div class="row">
+                    <!-- ============================================================== -->
+                    <!-- basic form -->
+                    <!-- ============================================================== -->
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                        <div class="card">
+                            <h5 class="card-header">Fill form</h5>
+                            <div class="card-body">
+                                <form action="#" id="add_service_form" data-parsley-validate="">
+                                    <div class="form-group">
+                                        <label for="servName">Service Name</label>
+                                        <input id="servName" type="text" name="servName" data-parsley-trigger="change"
+                                            required="" placeholder="Enter service name" autocomplete="off"
+                                            class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="image">Service Images</label>
+                                        <input class="form-control form-control-lg" type="file" id="image"
+                                            onchange="fileValidation()" required="" placeholder="Service Image"
+                                            autocomplete="off">
+                                    </div>
+                                    <div class="mt-3 mb-3" id="imagePreview"></div>
+                                    <div class="form-group">
+                                        <label for="expec_fee">Expected cost (can be null)</label>
+                                        <input id="expec_fee" type="number" name="expec_fee" step="0.01"
+                                            data-parsley-trigger="change" placeholder="Enter expected cost"
+                                            autocomplete="off" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="expec_fee">Service description</label>
+                                        <textarea name="descr" id="descr" class="form-control" cols="30"
+                                            rows="5"></textarea>
+                                    </div>
+                                    <div class="row">
+
+                                        <div class="col-sm-6 pl-0">
+                                            <p class="text-right">
+                                                <button type="submit" class="btn btn-space btn-primary">Submit</button>
+                                                <button class="btn btn-space btn-secondary">Cancel</button>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ============================================================== -->
+                    <!-- end basic form -->
+                    <!-- ============================================================== -->
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- footer -->
+    <!-- ============================================================== -->
+    <div class="footer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    Copyright © 2018 Concept. All rights reserved. Dashboard by <a
+                        href="https://colorlib.com/wp/">Colorlib</a>.
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="text-md-right footer-links d-none d-sm-block">
+                        <a href="javascript: void(0);">About</a>
+                        <a href="javascript: void(0);">Support</a>
+                        <a href="javascript: void(0);">Contact Us</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- end footer -->
+    <!-- ============================================================== -->
+</div>
+<!-- ============================================================== -->
+<!-- end wrapper  -->
+<!-- ============================================================== -->
+{% include 'service_footer.html' %}
+
+<script>
+    $('#add_service_form').submit((e) => {
+        e.preventDefault();
+        service_name = $('#servName').val()
+        expec_fee = $('#expec_fee').val() == '' ? 0 : $('#expec_fee').val();
+        descr = $('#descr').val()
+        if (service_name.length > 2) {
+            if (descr.length > 2) {
+                if (fileValidation()) {
+                    var formData;
+                    formData = new FormData();
+                    formData.append('file', $('#image')[0].files[0]);
+                    formData.append("service_name", service_name)
+                    formData.append("expec_fee", expec_fee);
+                    formData.append("descr", descr);
+                    formData.append("action", 1);
+                    $.ajax({
+                        headers: { "X-CSRFToken": '{{csrf_token}}' },
+                        type: "POST",
+                        url: "/service-api/api-register/",
+                        data: formData,
+                        processData: false, // important
+                        contentType: false, // important
+                        success: (response) => {
+                            response = JSON.parse(response)
+                            if (response.status == 1) {
+                                swal('Success', response.msg, 'success', 'OK');
+                                $("#add_service_form").trigger('reset')
+                            } else {
+                                swal('Error', response.msg, 'error', 'Close');
+                            }
+                        },
+
+                    });
+                }
+            } else {
+                swal('Error', 'Please enter valid service description', 'info', 'close');
+            }
+        } else {
+            swal('Error', 'Please enter valid service name', 'info', 'close');
+        }
+        return false;
+    })
+    function fileValidation() {
+        var fileInput =
+            document.getElementById('image');
+        var filePath = fileInput.value;
+
+        // Allowing file type
+        var allowedExtensions =
+            /(\.jpg|\.jpeg|\.png)$/i;
+
+        if (!allowedExtensions.exec(filePath)) {
+            swal('Error', 'Please upload a valid id proof.Allowed JPEG,JPG,PNG', 'error', 'close');
+            fileInput.value = '';
+            return false;
+        }
+        else {
+            // Image preview
+            if (fileInput.files && fileInput.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById(
+                        'imagePreview').innerHTML =
+                        '<img class="w-50" src="' + e.target.result
+                        + '"/>';
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+            return true
+        }
+    }
+    function swal(title, text, icon, btnText) {
+        Swal.fire({
+            'title': title,
+            'text': text,
+            'icon': icon,
+            'confirmButtonText': btnText
+        })
+    }
+</script>

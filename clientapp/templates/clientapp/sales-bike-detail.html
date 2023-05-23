@@ -1,0 +1,441 @@
+{% load static %}
+
+{% include 'header.html' %}
+<script type="text/javascript"
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC5Jrp9PtHe0WapppUzxbIpMDWMAcV3qE4"></script>
+<script src="https://unpkg.com/location-picker/dist/location-picker.min.js"></script>
+<!-- Page Header Start -->
+<div class="container-fluid page-header mb-5 p-0" style="background-image: url(img/carousel-bg-1.jpg);">
+    <div class="container-fluid page-header-inner py-5">
+        <div class="container text-center">
+            <h1 class="display-3 text-white mb-3 animated slideInDown">Bike Details</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb justify-content-center text-uppercase">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item text-white active" aria-current="page">Bike Details</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+<!-- Page Header End -->
+<!-- Testimonial Start -->
+
+<div class="row p-5 py-5 wow fadeInUp" data-wow-delay="0.1s">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="main-img">
+                <img class="img-fluid" src="{% static '/image/sales_bikes/' %}{{payload.14.0.0}}" alt="ProductS">
+                <div class="row my-3 previews">
+                    {% for key in payload.14 %}
+                    <div class="col-md-3">
+                        <img class="w-100" src="{% static 'image/sales_bikes/'%}{{key.0}}" alt="{{key.2}}">
+                    </div>
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div class="main-description px-2">
+                <div class="category text-bold">
+                    sold by: {{payload.7}}
+                </div>
+                <div class="product-title text-bold my-3">
+                    <small><b>{{ payload.6}}</b></small> {{payload.1}}
+                </div>
+                <div class="price-area my-4">
+                    <p class="old-price mb-1">Booking Amount : <span
+                            class="old-price-discount text-danger">₹{{payload.2}}</span></p>
+                    <p class="new-price text-bold mb-1">₹{{ payload.5}}</p>
+                    <p class="text-secondary mb-1">(Additional tax may apply on checkout)</p>
+
+                </div>
+                <div class="buttons d-flex my-5">
+                    <div class="block">
+                        <a href="/purchase/{{payload.0}}" class="shadow btn custom-btn1">Buy Now</a>
+                    </div>
+
+
+                </div>
+
+
+
+
+            </div>
+
+            <div class="product-details my-4">
+                <p class="details-title text-color mb-1">Product Details</p>
+                <p class="description">{{payload.4}} </p>
+            </div>
+
+            <div class="row questions bg-light p-3">
+                <div class="col-md-1 icon">
+                    <i class="fa-brands fa-rocketchat questions-icon"></i>
+                </div>
+                <div class="col-md-11 text">
+                    Have a question about our products at E-Store? Feel free to contact our representatives via live
+                    chat or email.
+                    <address>
+                        Address : {{payload.8}} , {{payload.11}} , {{payload.12}}
+                    </address>
+                    <address> Phone : {{payload.9}} <br> Email : {{payload.10}} </address>
+                </div>
+            </div>
+
+            <div class="delivery my-4">
+                <p class="font-weight-bold mb-0"><span><i class="fa-solid fa-truck"></i></span> <b>Delivery done in 3
+                        days from date of purchase</b> </p>
+                <p class="text-secondary">Order now to get this product delivery</p>
+            </div>
+            <div class="delivery-options my-4">
+                <p class="font-weight-bold mb-0"><span><i class="fa-solid fa-filter"></i></span> <b>Delivery options</b>
+                </p>
+                <p class="text-secondary">Booking options</p>
+                <label for="" class="text-info">Cashless(Pay full amount online) </label> | <label for=""
+                    class="text-primary">Cash on delivery(pay advance amount)</label>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container similar-products my-4">
+    <hr>
+    <p class="display-5">Similar Products</p>
+
+    <div class="row">
+        {% for key in recomended %}
+        <div class="col-md-3">
+            <div class="card">
+                <div class="imgBox">
+                    <img src="{% static '/image/sales_bikes/' %}{{key.4.0.0}}" alt="{{key.4.0.0}}" class="mouse">
+                </div>
+                <div class="contentBox">
+                    <label for="" class="text-light">{{key.3}}</label>
+                    <h3>{{key.1}}</h3>
+                    <h2 class="price"> ₹<small>{{key.2}}</small></h2>
+                    <div>
+                        <a href="/book-sales-bike/{{key.0}}" class="buy">Book</a>
+                        <a href="/view-sales-bike/{{key.0}}" class="buy bg-success">View</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+
+
+
+
+{% include 'footer.html' %}
+<style>
+    #map {
+        width: 100%;
+        height: 480px;
+        pointer-events: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+
+    .badge {
+
+        padding: 10px 15px;
+        font-size: 15px;
+    }
+
+    .text-bold {
+        font-weight: 800;
+    }
+
+    text-color {
+        color: #0093c4;
+    }
+
+    /* Main image - left */
+    .main-img img {
+        width: 100%;
+    }
+
+    /* Preview images */
+    .previews img {
+        width: 100%;
+        height: 150px;
+    }
+
+    .main-description .category {
+        text-transform: uppercase;
+        color: #0093c4;
+    }
+
+    .main-description .product-title {
+        font-size: 2.5rem;
+    }
+
+    .old-price-discount {
+        font-weight: 600;
+    }
+
+    .new-price {
+        font-size: 1rem;
+    }
+
+    .details-title {
+        text-transform: uppercase;
+        font-weight: 600;
+        font-size: 1.2rem;
+        color: #757575;
+    }
+
+    .buttons .block {
+        margin-right: 5px;
+    }
+
+    .quantity input {
+        border-radius: 0;
+        height: 40px;
+
+    }
+
+
+    .custom-btn {
+        text-transform: capitalize;
+        background-color: #0093c4;
+        color: white;
+        width: 150px;
+        height: 40px;
+        border-radius: 0;
+    }
+
+    .custom-btn:hover {
+        background-color: #0093c4 !important;
+        font-size: 18px;
+        color: white !important;
+    }
+
+    .custom-btn1 {
+        text-transform: capitalize;
+        background-color: lightgreen;
+        color: #000;
+        width: 150px;
+        height: 40px;
+        border-radius: 0;
+    }
+
+    .custom-btn1:hover {
+        background-color: lightgreen !important;
+        font-size: 18px;
+        color: #000 !important;
+    }
+
+
+    .similar-product img {
+        height: 400px;
+    }
+
+    .similar-product {
+        text-align: left;
+    }
+
+    .similar-product .title {
+        margin: 17px 0px 4px 0px;
+    }
+
+    .similar-product .price {
+        font-weight: bold;
+    }
+
+    .questions .icon i {
+        font-size: 2rem;
+    }
+
+    .questions-icon {
+        font-size: 2rem;
+        color: #0093c4;
+    }
+
+
+    /* Small devices (landscape phones, less than 768px) */
+    @media (max-width: 767.98px) {
+
+        /* Make preview images responsive  */
+        .previews img {
+            width: 100%;
+            height: auto;
+        }
+
+    }
+
+    .card {
+        position: relative;
+        width: 320px;
+        height: auto;
+        background: #191919;
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid #D81324;
+    }
+
+    .card::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        width: 100%;
+        height: 100%;
+        background: #D81324;
+        transform: skewY(349deg);
+        transition: 0.5s;
+    }
+
+    .card:hover::before {
+        top: -70%;
+        transform: skewY(390deg);
+    }
+
+    .card::after {
+        content: "CORSAIR";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        font-weight: 600;
+        font-size: 6em;
+        color: rgba(0, 0, 0, 0.1);
+    }
+
+    .card .imgBox {
+        position: relative;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /* padding-top: 20px; */
+        z-index: 1;
+    }
+
+
+    .card .imgBox img {
+        max-width: 100%;
+
+        transition: .5s;
+    }
+
+    .card:hover .imgBox img {
+        max-width: 80%;
+        margin-top: 20px;
+    }
+
+    .card .contentBox {
+        position: relative;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        z-index: 2;
+    }
+
+    .card .contentBox h2 {
+        margin-top: 0 !important;
+    }
+
+    .card .contentBox h3 {
+        font-size: 18px;
+        color: white;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-top: 0 !important;
+    }
+
+    .card .contentBox .price {
+        font-size: 24px;
+        color: white;
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+
+    .card .contentBox .buy {
+        position: relative;
+        top: 100px;
+        opacity: 0;
+        padding: 10px 30px;
+        margin-top: 15px;
+        color: #FFF;
+        text-decoration: none;
+        background: #D81324;
+        border-radius: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: 0.5s;
+    }
+
+    .card:hover .contentBox .buy {
+        top: 0;
+        opacity: 1;
+    }
+
+    .mouse {
+        height: 300px;
+        width: auto;
+    }
+</style>
+<script>
+    let table = new DataTable('#data_table');
+    var map = document.getElementById('map');
+
+    // Initialize LocationPicker plugin
+    var lp = new locationPicker(map, {
+        setCurrentPosition: true, // You can omit this, defaults to true
+        lat: '{{payload.4}}',
+        lng: '{{payload.5}}'
+    }, {
+        zoom: 15 // You can set any google map options here, zoom defaults to 15
+    });
+    function cancellService(serviceBookid) {
+        if (serviceBookid != null) {
+            invokeAjax({
+                'action': 9,
+                'userStatus': 5,
+                'serviceBookid': serviceBookid
+            })
+        }
+    }
+    function invokeAjax(data) {
+        $.ajax({
+            headers: { "X-CSRFToken": '{{csrf_token}}' },
+            type: "POST",
+            url: "/api-register/",
+            data: data,
+            success: (response) => {
+                response = JSON.parse(response)
+                if (response.status == 1) {
+                    swal('Success', response.msg, 'success', 'OK');
+                    setTimeout(() => {
+                        location.reload()
+                    }, 1500);
+                } else {
+                    swal('Error', response.msg, 'error', 'Close');
+                }
+            },
+
+        });
+    }
+
+    function swal(title, text, icon, btnText) {
+        Swal.fire({
+            'title': title,
+            'text': text,
+            'icon': icon,
+            'confirmButtonText': btnText
+        })
+    }
+</script>

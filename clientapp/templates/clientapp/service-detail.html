@@ -1,0 +1,338 @@
+{% load static %}
+
+{% include 'header.html' %}
+<script type="text/javascript"
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC5Jrp9PtHe0WapppUzxbIpMDWMAcV3qE4"></script>
+<script src="https://unpkg.com/location-picker/dist/location-picker.min.js"></script>
+<!-- Page Header Start -->
+<div class="container-fluid page-header mb-5 p-0" style="background-image: url(img/carousel-bg-1.jpg);">
+    <div class="container-fluid page-header-inner py-5">
+        <div class="container text-center">
+            <h1 class="display-3 text-white mb-3 animated slideInDown">Service Details</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb justify-content-center text-uppercase">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item text-white active" aria-current="page">Service Details</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+<!-- Page Header End -->
+<!-- Testimonial Start -->
+
+<div class="row p-5 py-5 wow fadeInUp" data-wow-delay="0.1s">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="main-img">
+                <img class="img-fluid" src="{% static 'image/service_book_img/'%}{{payload.25.0.2}}"
+                    alt="{{payload.25.0.2}}">
+                <div class="row my-3 previews">
+                    {% for key in payload.25 %}
+                    <div class="col-md-3">
+                        <img class="w-100" src="{% static 'image/service_book_img/'%}{{key.2}}" alt="{{key.2}}">
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="row my-3 previews p-3">
+                    <label for="" class="mb-2 mt-2">Your location :</label>
+                    <div id="map" aria-disabled="false"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div class="main-description px-2">
+                <div>
+
+                </div>
+                <div class="category text-bold mb-2">
+                    <img class="img-fluid" src="{% static 'image/service_list_image/'%}{{payload.12}}"
+                        alt="{{payload.12}}" style="width: 100px;border:2px solid">
+                </div>
+                <div class="category text-bold">
+                    SERVICE CENTER: {{payload.15}}
+                </div>
+                <div class="product-title text-bold my-3">
+                    {{payload.13}}
+                </div>
+                <div class="price-area my-4">
+                    <!-- <p class="old-price mb-1"><del>$100</del> <span class="old-price-discount text-danger">(20%
+                            off)</span></p> -->
+                    <p class="new-price text-bold mb-2"> SERVICE COST: ₹ {{payload.9}}</p>
+                    {% if payload.21 == 0 and payload.22 < 5 %} <p class="text-secondary mb-1">(Additional tax may apply
+                        on checkout)</p>
+                        <a href="" href="/pay-service-fee/{{payload.0}}" class="btn btn-warning">PAY</a>
+                        {% else %}
+                        <span class="badge bg-success">Paid</span>
+                        {% endif %}
+                </div>
+
+
+                <div class="buttons d-flex my-5">
+                    {% if payload.22 == 0 %}
+                    <span style="background-color: green; " class="text-light badge">Service
+                        Booking requested</span> <br>
+                    <button onclick="cancellService('{{payload.0}}')" class="btn btn-danger">Cancell</button>
+                    {% elif payload.22 == 1 %}
+                    <span style="background-color: yellow; " class="text-dark badge">Service
+                        Booking accepted, bike not recived</span>
+                    <button onclick="cancellService('{{payload.0}}')" class="btn btn-danger">Cancell</button>
+                    {% elif payload.22 == 2 %}
+                    <span style="background-color: orangered; " class="text-light badge">bike
+                        recived at service center. service started</span>
+                    {% elif payload.22 == 3 %}
+                    <span style="background-color: chocolate; " class="text-light badge">Sservice
+                        completed and ready to deliver</span>
+                    {% elif payload.22 == 4 %}
+                    <span style="background-color: lightgreen; " class="text-dark badge">bike
+                        delivered and service completed.</span>
+                    {% elif payload.22 == 5 %}
+                    <span style="background-color: red; " class="text-light badge">cancelled
+                        by user</span>
+                    {% elif payload.22 == 6 %}
+                    <span style="background-color: darkred; " class="text-light badge">cancelled
+                        by service center</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="product-details my-4">
+                <p class="details-title text-color mb-1">Service Center Details</p>
+                <address><b>{{ payload.16 }} , {{payload.19}} , {{payload.20}}</b></address>
+                <!-- <p class="description">{{payload.2}}</p> -->
+                <p>Phone : <b>{{ payload.17 }}</b></p>
+                <p>Email : <b>{{ payload.18 }}</b></p>
+            </div>
+            <div class="row questions bg-light p-3">
+                <div class="col-md-2 icon">
+                    <h5 class="text-info">Customer Complaint:</h5>
+                </div>
+                <div class="col-md-10 text">
+                    {{payload.2}}
+                </div>
+            </div>
+
+            <div class="row questions bg-light p-3 mt-3">
+                <div class="col-md-2 icon">
+                    <h5 class="text-info">Service center Notes:</h5>
+                </div>
+                <div class="col-md-10 text">
+                    {{payload.3}}
+                </div>
+            </div>
+
+            <div class="delivery my-2 mt-4">
+                <p class="font-weight-bold mb-0"><span><i class="fa-solid fa-truck"></i></span> <b>Service Booked on</b>
+                </p>
+                <p class="text-secondary">{{payload.23}}</p>
+            </div>
+            <div class="delivery my-2 mt-4">
+                <p class="font-weight-bold mb-0"><span><i class="fa-solid fa-truck"></i></span> <b>Expected delivery
+                        on</b> </p>
+                <p class="text-secondary">{{payload.1}}</p>
+            </div>
+            <div class="product-details my-4 mt-4">
+                <p class="details-title text-color mb-1">Bike Details</p>
+                <p>Registration NO : <b>{{payload.7}} </b></p>
+                <!-- <p class="description">{{payload.2}}</p> -->
+                <p>Brand : <b>{{ payload.11 }}</b></p>
+                <p>Model : <b>{{ payload.6 }}</b></p>
+            </div>
+
+            <div class="delivery-options my-2 mt-3">
+                <p class="font-weight-bold mb-0"><span><i class="fa-solid fa-filter"></i></span> <b>Delivery options</b>
+                </p>
+                <p class="text-secondary">View delivery options here</p>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+</div>
+
+
+
+
+
+{% include 'footer.html' %}
+<style>
+    #map {
+        width: 100%;
+        height: 480px;
+        pointer-events: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+
+    .badge {
+
+        padding: 10px 15px;
+        font-size: 15px;
+    }
+
+    .text-bold {
+        font-weight: 800;
+    }
+
+    text-color {
+        color: #0093c4;
+    }
+
+    /* Main image - left */
+    .main-img img {
+        width: 100%;
+    }
+
+    /* Preview images */
+    .previews img {
+        width: 100%;
+        height: 150px;
+    }
+
+    .main-description .category {
+        text-transform: uppercase;
+        color: #0093c4;
+    }
+
+    .main-description .product-title {
+        font-size: 2.5rem;
+    }
+
+    .old-price-discount {
+        font-weight: 600;
+    }
+
+    .new-price {
+        font-size: 1rem;
+    }
+
+    .details-title {
+        text-transform: uppercase;
+        font-weight: 600;
+        font-size: 1.2rem;
+        color: #757575;
+    }
+
+    .buttons .block {
+        margin-right: 5px;
+    }
+
+    .quantity input {
+        border-radius: 0;
+        height: 40px;
+
+    }
+
+
+    .custom-btn {
+        text-transform: capitalize;
+        background-color: #0093c4;
+        color: white;
+        width: 150px;
+        height: 40px;
+        border-radius: 0;
+    }
+
+    .custom-btn:hover {
+        background-color: #0093c4 !important;
+        font-size: 18px;
+        color: white !important;
+    }
+
+    .similar-product img {
+        height: 400px;
+    }
+
+    .similar-product {
+        text-align: left;
+    }
+
+    .similar-product .title {
+        margin: 17px 0px 4px 0px;
+    }
+
+    .similar-product .price {
+        font-weight: bold;
+    }
+
+    .questions .icon i {
+        font-size: 2rem;
+    }
+
+    .questions-icon {
+        font-size: 2rem;
+        color: #0093c4;
+    }
+
+
+    /* Small devices (landscape phones, less than 768px) */
+    @media (max-width: 767.98px) {
+
+        /* Make preview images responsive  */
+        .previews img {
+            width: 100%;
+            height: auto;
+        }
+
+    }
+</style>
+<script>
+    let table = new DataTable('#data_table');
+    var map = document.getElementById('map');
+
+    // Initialize LocationPicker plugin
+    var lp = new locationPicker(map, {
+        setCurrentPosition: true, // You can omit this, defaults to true
+        lat: '{{payload.4}}',
+        lng: '{{payload.5}}'
+    }, {
+        zoom: 15 // You can set any google map options here, zoom defaults to 15
+    });
+    function cancellService(serviceBookid) {
+        if (serviceBookid != null) {
+            invokeAjax({
+                'action': 9,
+                'userStatus': 5,
+                'serviceBookid': serviceBookid
+            })
+        }
+    }
+    function invokeAjax(data) {
+        $.ajax({
+            headers: { "X-CSRFToken": '{{csrf_token}}' },
+            type: "POST",
+            url: "/api-register/",
+            data: data,
+            success: (response) => {
+                response = JSON.parse(response)
+                if (response.status == 1) {
+                    swal('Success', response.msg, 'success', 'OK');
+                    setTimeout(() => {
+                        location.reload()
+                    }, 1500);
+                } else {
+                    swal('Error', response.msg, 'error', 'Close');
+                }
+            },
+
+        });
+    }
+
+    function swal(title, text, icon, btnText) {
+        Swal.fire({
+            'title': title,
+            'text': text,
+            'icon': icon,
+            'confirmButtonText': btnText
+        })
+    }
+</script>

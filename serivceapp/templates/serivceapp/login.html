@@ -1,0 +1,135 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>MotoLogic - service center management</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'admin/vendor/bootstrap/css/bootstrap.min.css' %}">
+    <link href="{% static 'admin/vendor/fonts/circular-std/style.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'admin/libs/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/vendor/fonts/fontawesome/css/fontawesome-all.css' %}">
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-align: center;
+            align-items: center;
+            padding-top: 40px;
+            padding-bottom: 40px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ============================================================== -->
+    <!-- login page  -->
+    <!-- ============================================================== -->
+    <div class="splash-container">
+        <div class="card ">
+            <div class="card-header text-center"><a href="admin/home">
+                    <h2 class="text-primary">MotoLogic</h2>
+                </a><span class="splash-description">Please
+                    enter your user information.</span></div>
+            <div class="card-body">
+                <form id="login_form">
+                    <div class="form-group">
+                        <input class="form-control form-control-lg" id="email" type="text" placeholder="E-mail"
+                            autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control form-control-lg" id="password" type="password"
+                            placeholder="Password">
+                    </div>
+                    <div class="form-group">
+                        <label class="custom-control custom-checkbox">
+                            <input class="custom-control-input" type="checkbox"><span
+                                class="custom-control-label">Remember Me</span>
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg btn-block">Sign in</button>
+                </form>
+            </div>
+            <div class="card-footer bg-white p-0  ">
+                <div class="card-footer-item card-footer-item-bordered">
+                    <a href="/service-center/register" class="footer-link">Create An Account</a>
+                </div>
+                <div class="card-footer-item card-footer-item-bordered">
+                    <a href="/service-center/forgot-password" class="footer-link">Forgot Password</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- end login page  -->
+    <!-- ============================================================== -->
+    <!-- Optional JavaScript -->
+    <script src="{% static 'admin/vendor/jquery/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'admin/vendor/bootstrap/js/bootstrap.bundle.js' %}"></script>
+</body>
+<script>
+    $("#login_form").submit(function (event) {
+        event.preventDefault();
+        email = $('#email').val();
+        password = $('#password').val();
+
+        if (ValidateEmail(email)) {
+
+            if (password != '') {
+                $.ajax({
+                    headers: { "X-CSRFToken": '{{csrf_token}}' },
+                    type: "POST",
+                    url: "/service-api/api-register/",
+                    data: {
+                        'email': email,
+                        'password': password,
+                        'action': 2
+                    },
+                    success: (response) => {
+                        response = JSON.parse(response);
+                        if (response.status == 1) {
+                            swal('Success', response.msg, 'success', 'OK');
+                            setTimeout(() => {
+                                window.location.href = "/service-center/home";
+                            }, 2000)
+                        } else {
+                            swal('Error', response.msg, 'error', 'Close');
+                        }
+                    }
+                });
+            } else {
+                swal('Error', "Please enter your password", 'info', 'close');
+            }
+        } else {
+            swal('Error', "You have entered a invalid address", 'info', 'close');
+        }
+        return false;
+    });
+
+    function ValidateEmail(email) {
+        return email.match(
+            /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        );
+    }
+
+    function swal(title, text, icon, btnText) {
+        Swal.fire({
+            'title': title,
+            'text': text,
+            'icon': icon,
+            'confirmButtonText': btnText
+        })
+    }
+</script>
+
+</html>

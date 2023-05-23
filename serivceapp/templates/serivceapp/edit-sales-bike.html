@@ -1,0 +1,243 @@
+{% load static %}
+{% include 'service_header.html' %}
+
+<!-- ============================================================== -->
+<!-- wrapper  -->
+<!-- ============================================================== -->
+<div class="dashboard-wrapper mt-4">
+    <div class="dashboard-ecommerce">
+        <div class="container-fluid dashboard-content ">
+            <!-- ============================================================== -->
+            <!-- pageheader  -->
+            <!-- ============================================================== -->
+            <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="page-header">
+                        <h2 class="pageheader-title">MotoLogic</h2>
+                        <p class="pageheader-text">Nulla euismod urna eros, sit amet scelerisque torton lectus
+                            vel mauris facilisis faucibus at enim quis massa lobortis rutrum.</p>
+                        <div class="page-breadcrumb">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">Edit sales bike</li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ============================================================== -->
+            <!-- end pageheader  -->
+            <!-- ============================================================== -->
+            <div class="ecommerce-widget">
+
+                <div class="row">
+                    <!-- ============================================================== -->
+                    <!-- basic form -->
+                    <!-- ============================================================== -->
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                        <div class="card">
+                            <h5 class="card-header">Edit sales bike From</h5>
+
+                            <div class="card-body">
+                                <form action="#" id="edit_service_form" data-parsley-validate="">
+                                    <input type="hidden" name="bike_id" id="bike_id" value="{{ payload.0 }}">
+                                    <select class="form-group form-control" name="brand_id" id="brand_id">
+                                        <option disabled selected value="">Select brand</option>
+                                        {% for data in brand_data %}
+
+                                        <option value='{{data.0}}'>{{data.1}}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="form-group">
+                                        <label for="bikeName">Bike Name</label>
+                                        <input id="bikeName" type="text" name="bikeName" data-parsley-trigger="change"
+                                            required="" value="{{ payload.1 }}" placeholder="Enter service name"
+                                            autocomplete="off" class="form-control">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="mrp_price">MRP Price</label></label>
+                                        <input id="mrp_price" type="number" name="mrp_price" step="0.01"
+                                            data-parsley-trigger="change" value="{{ payload.5 }}"
+                                            placeholder="Enter mrp price" autocomplete="off" class="form-control">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="adv_amt">Minimum Advance amount</label>
+                                        <input id="adv_amt" type="number" name="adv_amt" step="0.01"
+                                            data-parsley-trigger="change" value="{{ payload.6 }}"
+                                            placeholder="Enter minimu Advance amount" autocomplete="off"
+                                            class="form-control">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="stock">Stock</label>
+                                        <input id="stock" type="number" name="stock" step="0"
+                                            data-parsley-trigger="change" placeholder="Enter stock quantity"
+                                            autocomplete="off" value="{{ payload.7 }}" class="form-control">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="descr">Description</label>
+                                        <textarea class="form-control" placeholder="Enter bike description"
+                                            value="{{ payload.6 }}" autocomplete="off" name="descr" id="descr" cols="30"
+                                            rows="5"></textarea>
+
+                                    </div>
+                                    <div class="row">
+
+                                        <div class="col-sm-6 pl-0">
+                                            <p class="text-right">
+                                                <button type="submit" class="btn btn-space btn-primary">Submit</button>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ============================================================== -->
+                    <!-- end basic form -->
+                    <!-- ============================================================== -->
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- footer -->
+    <!-- ============================================================== -->
+    <div class="footer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    Copyright © 2018 Concept. All rights reserved. Dashboard by <a
+                        href="https://colorlib.com/wp/">Colorlib</a>.
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="text-md-right footer-links d-none d-sm-block">
+                        <a href="javascript: void(0);">About</a>
+                        <a href="javascript: void(0);">Support</a>
+                        <a href="javascript: void(0);">Contact Us</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- end footer -->
+    <!-- ============================================================== -->
+</div>
+<!-- ============================================================== -->
+<!-- end wrapper  -->
+<!-- ============================================================== -->
+{% include 'service_footer.html' %}
+
+<script>
+    $('#edit_service_form').submit((e) => {
+        e.preventDefault();
+        bike_id = $('#bike_id').val()
+        brand_id = $('#brand_id').val();
+        bikeName = $('#bikeName').val()
+        mrp_price = $('#mrp_price').val()
+        adv_amt = $('#adv_amt').val()
+        stock = $('#stock').val()
+        descr = $('#descr').val()
+
+        if (brand_id > 0) {
+            if (bikeName.length > 2) {
+                if (mrp_price > 9999) {
+                    if (adv_amt > 999) {
+                        if (stock > 9) {
+                            if (descr.length > 9) {
+
+                                $.ajax({
+                                    headers: { "X-CSRFToken": '{{csrf_token}}' },
+                                    type: "POST",
+                                    url: "/service-api/api-register/",
+                                    data: {
+                                        'bike_id': bike_id,
+                                        'brand_id': brand_id,
+                                        'bikeName': bikeName,
+                                        'mrp_price': mrp_price,
+                                        'adv_amt': adv_amt,
+                                        'stock': stock,
+                                        'descr': descr,
+                                        'action': 13,
+                                    },
+
+                                    success: (response) => {
+                                        response = JSON.parse(response)
+                                        if (response.status == 1) {
+                                            swal('Success', response.msg, 'success', 'OK');
+                                            setTimeout(() => {
+                                                location.reload()
+                                            }, 1000);
+                                        } else {
+                                            swal('Error', response.msg, 'error', 'Close');
+                                        }
+                                    },
+                                });
+                            } else {
+                                swal('Error', 'Please enter valid description. minimum description length 10', 'info', 'close');
+                            }
+                        } else {
+                            swal('Error', 'Please enter valid stock quantity. minimum 10', 'info', 'close');
+                        }
+                    } else {
+                        swal('Error', 'Please enter valid advance amount. minimum ₹1000', 'info', 'close');
+                    }
+                } else {
+                    swal('Error', 'Please enter valid bike price. minimum ₹10000', 'info', 'close');
+                }
+            } else {
+                swal('Error', 'Please enter valid bike name', 'info', 'close');
+            }
+        } else {
+            swal('Error', 'Please select a brand name', 'info', 'close');
+        }
+        return false;
+    })
+    function fileValidation() {
+        var fileInput =
+            document.getElementById('image');
+        var filePath = fileInput.value;
+
+        // Allowing file type
+        var allowedExtensions =
+            /(\.jpg|\.jpeg|\.png)$/i;
+
+        if (!allowedExtensions.exec(filePath)) {
+            swal('Error', 'Please upload a valid Image.Allowed JPEG,JPG,PNG', 'error', 'close');
+            fileInput.value = '';
+            return false;
+        }
+        else {
+            // Image preview
+            if (fileInput.files && fileInput.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById(
+                        'imagePreview').innerHTML =
+                        '<img class="w-50" src="' + e.target.result
+                        + '"/>';
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+            return true
+        }
+    }
+    function swal(title, text, icon, btnText) {
+        Swal.fire({
+            'title': title,
+            'text': text,
+            'icon': icon,
+            'confirmButtonText': btnText
+        })
+    }
+
+</script>

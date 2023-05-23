@@ -1,0 +1,348 @@
+{% load static %}
+
+{% include 'header.html' %}
+
+<!-- Page Header Start -->
+<div class="container-fluid page-header mb-5 p-0" style="background-image: url(img/carousel-bg-1.jpg);">
+    <div class="container-fluid page-header-inner py-5">
+        <div class="container text-center">
+            <h1 class="display-3 text-white mb-3 animated slideInDown">Book service</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb justify-content-center text-uppercase">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item text-white active" aria-current="page">profile</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+<!-- Page Header End -->
+
+<!-- Testimonial Start -->
+<div class="container-xxl py-5 wow fadeInUp" data-wow-delay="0.1s">
+    <div class="container">
+        <div class="text-center">
+            <h6 class="text-primary text-uppercase mb-4">// profile //</h6>
+        </div>
+
+        <div class="row mt-4" style="background-color: #D81324;padding: 10px 10px;">
+            <div class="col-xl-12 col-md-12 col-lg-12 profile-div">
+                <div class="profile-card">
+                    <div class="img">
+                        <img src="{% static 'img/team-1.jpg' %}" oncontextmenu="return false">
+                    </div>
+                    <div class="caption">
+                        <h3 class="mb-2">{{payload.1}}</h3>
+                        <p class="mt-3">User</p>
+                        <div class="social-links">
+                            <p>{{payload.2}}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+            </div>
+
+            <div class="col-xl-12 col-md-12 col-lg-12 mt-4">
+                <form id="profile_form">
+                    <h5 class="text-light text-center mt-2 mb-2">Address info</h5>
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <div class="form-floating">
+                                <input type="email" disabled class="form-control" id="email" value="{{payload.2}}"
+                                    placeholder="Your Email">
+                                <label for="email">Your Email</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="hidden" id="userid" value="{{payload.0}}">
+                                <input type="text" class="form-control" id="fullname" value="{{payload.1}}"
+                                    placeholder="Your passowrd">
+                                <label for="name">Your Full Name</label>
+                            </div>
+                        </div>
+
+
+
+
+
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="number" class="form-control" value="{{payload.3}}" id="phone"
+                                    placeholder="Your Phone">
+                                <label for="email">Your Phone</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="form-floating">
+                                <textarea name="address" class="form-control" id="address" cols="30" rows="10"
+                                    placeholder="Your address"></textarea>
+                                <label for="name">Your address</label>
+                            </div>
+                        </div>
+
+                        <div class="col-12 text-center">
+                            <button class="btn btn-success w-50 py-3" id="submitBtn" type="submit">Submit</button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+            <div class="col-xl-12 col-md-12 col-lg-12 mt-4">
+                <form id="passupdate_form">
+                    <h5 class="text-light text-center mt-2 mb-2">Update Password</h5>
+                    <div class="row g-3">
+
+                        <div class="form-group">
+                            <div class="form-floating">
+                                <label for="servName">Current password</label>
+                                <input class="form-control " id="curr_pass" type="password"
+                                    placeholder="Enter current password" required autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-floating">
+                                <label for="servName">New password</label>
+                                <input class="form-control " id="passw" type="password" placeholder="Enter new password"
+                                    required autocomplete="off">
+
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="form-floating">
+                                <label for="servName">Confirm password</label>
+                                <input class="form-control " id="confpassw" type="password"
+                                    placeholder="Confirm new password" required autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="col-12 text-center">
+                            <button class="btn btn-success w-50 py-3" id="submitBtn" type="submit">Submit</button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+{% include 'footer.html' %}
+<style>
+    .profile-div {
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+    }
+
+    .profile-card {
+        width: 250px;
+        height: 250px;
+        background: #fff;
+        padding: 30px;
+        border-radius: 50%;
+        box-shadow: 0 0 22px #3336;
+        transition: .6s;
+    }
+
+    .profile-card:hover {
+        display: flex;
+        flex-direction: column;
+        border-radius: 10px;
+        height: 300px;
+    }
+
+    .profile-card img {
+        width: 100%;
+        height: 100%;
+        transition: .6s;
+        z-index: 10;
+    }
+
+    .profile-card:hover img {
+        transform: translateY(-60px);
+    }
+
+    img {
+        width: 100%;
+        border-radius: 50%;
+        box-shadow: 0 0 22px #3336;
+        transition: .6s;
+    }
+
+    .profile-card:hover img {
+        border-radius: 10px;
+    }
+
+    .caption {
+        margin-top: 15px;
+        text-align: center;
+        transform: translateY(-70px);
+        opacity: 0;
+        transition: .6s;
+    }
+
+    .profile-card:hover .caption {
+        opacity: 1;
+    }
+
+    .caption h3 {
+        font-size: 25px;
+        font-weight: 400;
+    }
+
+    .caption p {
+        position: relative;
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        top: -10px;
+        font-size: 15px;
+        color: #0c52a1;
+
+    }
+
+    .social-links {
+        margin-top: 50px;
+        display: flex;
+        width: 100%;
+        justify-content: space-around;
+        position: relative;
+        top: -35px;
+    }
+
+    @media only screen and (max-width: 700px) {
+        .profile-card {
+            margin-top: 45px;
+        }
+
+    }
+</style>
+<script>
+
+    $('#profile_form').submit((e) => {
+        e.preventDefault();
+        userid = $('#userid').val()
+        fullname = $('#fullname').val()
+        phone = $('#phone').val()
+        address = $('#address').val()
+        if (fullname.length > 2) {
+            if (ValidateMobile(phone)) {
+                if (ValidateAddress(address)) {
+                    invokeAjax({
+                        'action': 6,
+                        'userid': userid,
+                        'fullname': fullname,
+                        'phone': phone,
+                        'address': address,
+                        'informAction': 1
+                    })
+                } else {
+                    swal('Error', "You have entered a invalid address", 'info', 'close');
+                }
+            } else {
+                swal('Error', "You have entered an invalid mobile number", 'info', 'close');
+            }
+        } else {
+            swal('Error', 'Please enter valid name', 'info', 'close');
+        }
+
+        return false
+    })
+
+    $('#passupdate_form').submit((e) => {
+        e.preventDefault();
+        curr_pass = $('#curr_pass').val()
+        passw = $('#passw').val()
+        confpassw = $('#confpassw').val()
+
+        if (curr_pass.length > 2) {
+            if (validatePassword(passw, confpassw)) {
+                invokeAjax({
+                    'curr_pass': curr_pass,
+                    'passw': passw,
+                    'confpassw': confpassw,
+                    'informAction': 2,
+                    'action': 7
+                })
+            }
+        } else {
+            swal('Error', 'Please enter current password', 'info', 'close');
+        }
+        return false;
+    })
+    function validatePassword(p, p1) {
+        errors = [];
+        if (p.length < 8) {
+            errors.push("Your password must be at least 8 characters");
+        }
+        if (p.search(/[a-z]/i) < 0) {
+            errors.push("Your password must contain at least one letter.");
+        }
+        if (p.search(/[0-9]/) < 0) {
+            errors.push("Your password must contain at least one digit.");
+        }
+        if (p != p1) {
+            errors.push("Your password and confirm password not match");
+        }
+
+        if (errors.length > 0) {
+            swal('Error', errors.join("\n"), 'info', 'close');
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+
+    function invokeAjax(data) {
+        $.ajax({
+            headers: { "X-CSRFToken": '{{csrf_token}}' },
+            type: "POST",
+            url: "/api-register/",
+            data: data,
+            success: (response) => {
+                response = JSON.parse(response)
+                if (response.status == 1) {
+                    swal('Success', response.msg, 'success', 'OK');
+                } else {
+                    swal('Error', response.msg, 'error', 'Close');
+                }
+            },
+
+        });
+    }
+    function ValidateAddress(address) {
+        if (/^[a-z0-9\s,'-]*$/i.test(address)) {
+            return (true)
+        } else {
+            return (false)
+        }
+    }
+
+    function ValidateMobile(number) {
+        if (/^(0|91)?[6-9][0-9]{9}$/.test(number)) {
+            return (true)
+        } else {
+            return (false)
+        }
+    }
+
+    function swal(title, text, icon, btnText) {
+        Swal.fire({
+            'title': title,
+            'text': text,
+            'icon': icon,
+            'confirmButtonText': btnText
+        })
+    }
+
+</script>

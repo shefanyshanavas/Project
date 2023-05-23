@@ -1,0 +1,279 @@
+{% load static %}
+
+{% include 'header.html' %}
+
+
+<style type="text/css">
+    #map {
+        width: 100%;
+        height: 480px;
+    }
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- Page Header Start -->
+<div class="container-fluid page-header mb-5 p-0" style="background-image: url(img/carousel-bg-1.jpg);">
+    <div class="container-fluid page-header-inner py-5">
+        <div class="container text-center">
+            <h1 class="display-3 text-white mb-3 animated slideInDown">Feedback</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb justify-content-center text-uppercase">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#">services</a></li>
+                    <li class="breadcrumb-item text-white active" aria-current="page">Feedback</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+<!-- Page Header End -->
+
+
+
+<!-- Contact Start -->
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h1 class="mb-5">Feedback</h1>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
+                <div class="wow fadeInUp" data-wow-delay="0.2s">
+
+                    <section class="section">
+                        <div class="star-rating-bx">
+
+                            <div class="star-widget">
+
+                                <div class="start-div ">
+                                    <input type="radio" name="star" id="rate-5" value="5">
+                                    <label for="rate-5" class="fa-solid fa-star"></label>
+                                    <input type="radio" name="star" id="rate-4" value="4">
+                                    <label for="rate-4" class="fa-solid fa-star"></label>
+                                    <input type="radio" name="star" id="rate-3" value="3">
+                                    <label for="rate-3" class="fa-solid fa-star"></label>
+                                    <input type="radio" name="star" id="rate-2" value="2">
+                                    <label for="rate-2" class="fa-solid fa-star"></label>
+                                    <input type="radio" name="star" id="rate-1" value="1">
+                                    <label for="rate-1" class="fa-solid fa-star"></label>
+                                    <p id="error-rating"></p>
+                                    <p class="rating-desc"></p>
+                                </div>
+                                <div class="textarea">
+                                    <textarea class="w-100" cols="30" id="comment"
+                                        placeholder="Describe your comment"></textarea>
+                                    <p id="error-comment"></p>
+                                </div>
+                                <div class="btn-div text-center">
+                                    <button class="btn btn-primary" onclick="feedBack()" type="submit">Submit</button>
+                                </div>
+                                <!-- <div class="modal fade" id="simpleModal" tabindex="-1"
+                                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h3 class="modal-title" id="exampleModalLabel">Thank you</h3>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close" onClick="reload"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>We appreciate you sending us your feedback.</p>
+                                                    <p><strong>You're select </strong>⭐ <span id="star_count"></span>
+                                                    </p>
+                                                    <p><strong>Your comment </strong><span id="comment_text"></span>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> -->
+
+                            </div>
+                        </div>
+                    </section>
+
+
+
+                </div>
+            </div>
+            <div class="col-md-1"></div>
+
+        </div>
+    </div>
+</div>
+<!-- Contact End -->
+
+{% include 'footer.html' %}
+<script>
+
+    function feedBack() {
+
+        if (document.getElementById('comment').value === '') {
+            swal('Error', 'Please enter comment', 'error', 'Close');
+            return false
+
+        } else {
+            document.getElementById('error-comment').innerHTML = "";
+        }
+
+        if (document.getElementById('comment').length <= 5) {
+            swal('Error', 'Please enter a valid comment. minimum character 6', 'error', 'Close');
+            return false
+        } else {
+            document.getElementById('error-comment').innerHTML = "";
+        }
+
+        if ($("input[type=radio]:checked").val() === 'undefined') {
+            document.getElementById('error-rating').innerHTML = "* Please choose any star";
+            swal('Error', 'Please choose any star', 'error', 'Close');
+            return false
+        } else {
+            document.getElementById('error-rating').innerHTML = "";
+        }
+
+        var rating_Count = document.querySelector("input[name=star]:checked").value;
+        var comment = document.getElementById('comment').value;
+
+        invokeAjax({
+            'rating': rating_Count,
+            'comment': comment,
+            'service_id': '{{payload.0}}',
+            'action': 15
+        })
+    }
+
+    function invokeAjax(data) {
+        $.ajax({
+            headers: { "X-CSRFToken": '{{csrf_token}}' },
+            type: "POST",
+            url: "/api-register/",
+            data: data,
+            success: (response) => {
+                response = JSON.parse(response)
+                if (response.status == 1) {
+                    swal('Success', response.msg, 'success', 'OK');
+                } else {
+                    swal('Error', response.msg, 'error', 'Close');
+                }
+            },
+
+        });
+    }
+
+    function swal(title, text, icon, btnText) {
+        Swal.fire({
+            'title': title,
+            'text': text,
+            'icon': icon,
+            'confirmButtonText': btnText
+        })
+    }
+
+
+
+
+
+</script>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+    .start-div {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .star-widget input {
+        display: none;
+    }
+
+    .star-widget label {
+        font-size: 35px;
+        color: #444;
+        padding: 10px;
+        float: right;
+        transition: all .2s ease;
+    }
+
+    input:not(:checked)~label:hover,
+    input:not(:checked)~label:hover~label {
+        color: #fd4;
+    }
+
+    input:checked~label {
+        color: #fd4;
+
+    }
+
+    #rate-1:checked~.rating-desc:before {
+        content: "Poor😋";
+    }
+
+    #rate-2:checked~.rating-desc:before {
+        content: "Not bad";
+    }
+
+    #rate-3:checked~.rating-desc:before {
+        content: "Average";
+    }
+
+    #rate-4:checked~.rating-desc:before {
+        content: "Good😋";
+    }
+
+    #rate-5:checked~.rating-desc:before {
+        content: "Excellent😋";
+    }
+
+    .rating-desc {
+        width: 100%;
+        font-size: 20px;
+        font-weight: 600;
+        margin: 5px 0 20px 0;
+        text-align: center;
+        transition: all .2s ease;
+    }
+
+    .textarea textarea {
+        border: 1px solid #e4e5e7;
+        background: white;
+        color: #6C6C6E;
+        padding: 22px;
+        font-size: 16px;
+        margin-top: 15px;
+        letter-spacing: -0.011em;
+        border-radius: 10px;
+        resize: none;
+    }
+
+
+
+    .star-rating-bx {
+        background-color: #fff;
+        box-shadow: 0px 4px 40px 0px rgb(0 0 0 / 5%);
+        border-radius: 10px;
+        padding: 40px;
+    }
+
+
+    @media (max-width:576px) {
+        .star-rating-bx {
+            padding: 20px 15px;
+        }
+    }
+
+    .star-icon {
+        padding-bottom: 20px;
+    }
+
+    .modal-title {
+        font-weight: 600;
+    }
+
+    #error-comment,
+    #error-rating {
+        color: red;
+    }
+</style>

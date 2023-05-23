@@ -1,0 +1,201 @@
+{% load static %}
+
+{% include 'header.html' %}
+
+<!-- Page Header Start -->
+<div class="container-fluid page-header mb-5 p-0" style="background-image: url(img/carousel-bg-1.jpg);">
+    <div class="container-fluid page-header-inner py-5">
+        <div class="container text-center">
+            <h1 class="display-3 text-white mb-3 animated slideInDown">Service History</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb justify-content-center text-uppercase">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item text-white active" aria-current="page">Service History</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+<!-- Page Header End -->
+<!-- Testimonial Start -->
+<div class="row p-5 py-5 wow fadeInUp" data-wow-delay="0.1s">
+    <div class="col-xl-12 col-md-12 col-lg-12 profile-div">
+        <table id="data_table" style="border: 1px solid;"
+            class="table table-responsive table-striped table-bordered uk-table-hover" style="width:100%">
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>bike image</th>
+                    <th>Bike Number</th>
+                    <th>Bike info</th>
+                    <th>Service Name</th>
+                    <th>Service station info</th>
+                    <th>Customer note</th>
+                    <th>Expected cost</th>
+                    <th>pickup mode</th>
+                    <th>create date</th>
+                    <th>expected delivery</th>
+                    <th>Payment status</th>
+                    <th>status</th>
+                    <th>action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if not payload %}
+                <tr>
+                    <td colspan="11"></td>
+                </tr>
+                {% else %}
+                {% for key in payload %}
+                <tr>
+                    <td>{{key.0}}</td>
+                    <td>
+                        {% for i in key.25 %}
+                        <img src="{% static 'image/service_book_img/' %}{{i.2}}" class="w-100" alt="{{i.2}}">
+                        {% endfor %}
+                    </td>
+                    <td>{{ key.7 }}</td>
+                    <td>{{ key.6 }},{{ key.11 }}</td>
+                    <td>{{ key.13 }}</td>
+                    <td>
+                        <address>{{ key.15 }}, {{ key.16 }}, {{ key.19 }},{{ key.20 }}</address> phone : {{key.17}}
+                        email: {{key.18}}
+                    </td>
+                    <td>{{ key.2}}</td>
+                    <td>₹{{ key.9}}</td>
+
+                    <td>
+                        {% if key.21 == 0 %}
+                        <span style="background-color: red; " class="text-light badge">Customer Drop</span>
+                        {% else %}
+                        <span style="background-color: green; " class="text-light badge">Excutive collect</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ key.23}}</td>
+                    <td>{{ key.24}}</td>
+                    <td>{% if key.21 == 0 %}
+                        <span style="background-color: red; " class="text-light badge">Not
+                            paid</span>
+                        {% if key.22 < 5 %} <a href="/pay-service-fee/{{key.0}}" class="btn btn-warning mt-2">Pay</a>
+                            {% endif %}
+                            {% else %}
+                            <span style="background-color: green; " class="text-light badge">Paid</span>
+                            {% endif %}
+                    </td>
+                    <td>{% if key.22 == 0 %}
+                        <span style="background-color: green; " class="text-light badge">Service
+                            Booking requested</span>
+                        {% elif key.22 == 1 %}
+                        <span style="background-color: yellow; " class="text-dark badge">Service
+                            Booking accepted, bike not recived</span>
+                        {% elif key.22 == 2 %}
+                        <span style="background-color: orangered; " class="text-light badge">bike
+                            recived at service center. service started</span>
+                        {% elif key.22 == 3 %}
+                        <span style="background-color: chocolate; " class="text-light badge">Sservice
+                            completed and ready to deliver</span>
+                        {% elif key.22 == 4 %}
+                        <span style="background-color: lightgreen; " class="text-dark badge">bike
+                            delivered and service completed.</span>
+                        {% elif key.22 == 5 %}
+                        <span style="background-color: red; " class="text-light badge">cancelled
+                            by user</span>
+                        {% elif key.22 == 6 %}
+                        <span style="background-color: darkred; " class="text-light badge">cancelled
+                            by service center</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if key.22 == 0 or key.22 == 1 %}
+                        <button onclick="cancellService('{{key.0}}')" class="btn btn-danger">X</button>
+                        {% endif %}
+                        <a href="/view-service-detail/{{key.0}}" class="btn btn-info mt-2">View</a>
+                        {% if key.22 == 4 or key.22 == 4 %}
+                        <a href="/feedback/{{key.0}}" class="btn btn-danger mt-2">Review</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+
+                {% endif %}
+
+
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>id</th>
+                    <th>bike image</th>
+                    <th>Bike Number</th>
+                    <th>Bike info</th>
+                    <th>Service Name</th>
+                    <th>Service station info</th>
+                    <th>Customer note</th>
+                    <th>Expected cost</th>
+                    <th>pickup mode</th>
+                    <th>booked on</th>
+                    <th>expected delivery</th>
+                    <th>Payment status</th>
+                    <th>status</th>
+                    <th>action</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+
+</div>
+
+
+
+
+
+{% include 'footer.html' %}
+<style>
+    .badge {
+        background-color: red;
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+</style>
+<script>
+    let table = new DataTable('#data_table');
+
+    function cancellService(serviceBookid) {
+        if (serviceBookid != null) {
+            invokeAjax({
+                'action': 9,
+                'userStatus': 5,
+                'serviceBookid': serviceBookid
+            })
+        }
+    }
+    function invokeAjax(data) {
+        $.ajax({
+            headers: { "X-CSRFToken": '{{csrf_token}}' },
+            type: "POST",
+            url: "/api-register/",
+            data: data,
+            success: (response) => {
+                response = JSON.parse(response)
+                if (response.status == 1) {
+                    swal('Success', response.msg, 'success', 'OK');
+                    setTimeout(() => {
+                        location.reload()
+                    }, 1500);
+                } else {
+                    swal('Error', response.msg, 'error', 'Close');
+                }
+            },
+
+        });
+    }
+
+    function swal(title, text, icon, btnText) {
+        Swal.fire({
+            'title': title,
+            'text': text,
+            'icon': icon,
+            'confirmButtonText': btnText
+        })
+    }
+</script>

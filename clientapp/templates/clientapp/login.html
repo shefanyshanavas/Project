@@ -1,0 +1,138 @@
+{% load static %}
+
+{% include 'header.html' %}
+
+
+<!-- Page Header Start -->
+<div class="container-fluid page-header mb-5 p-0" style="background-image: url('img/carousel-bg-1.jpg');">
+    <div class="container-fluid page-header-inner py-5">
+        <div class="container text-center">
+            <h1 class="display-3 text-white mb-3 animated slideInDown">Login</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb justify-content-center text-uppercase">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#">Pages</a></li>
+                    <li class="breadcrumb-item text-white active" aria-current="page">Login</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+<!-- Page Header End -->
+
+
+<!-- Contact Start -->
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            {% if status %}
+            {% if status == 1 %}
+            <div class="alert alert-success" role="alert">
+                Success : account verification completed. Please login
+            </div>
+            {% elif status == 2 %}
+            <div class="alert alert-danger" role="alert">
+                Error: link exipred.
+            </div>
+            {% endif %}
+            {% endif %}
+            <h1 class="mb-5">Please Login</h1>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-3"></div>
+            <div class="col-md-6">
+                <div class="wow fadeInUp" data-wow-delay="0.2s">
+                    <form id="login_form">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="email" class="form-control" id="email" placeholder="Your Email">
+                                    <label for="email">Your Email</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="password" class="form-control" id="password"
+                                        placeholder="Your passowrd">
+                                    <label for="name">Your password</label>
+                                </div>
+                            </div>
+
+
+                            <div class="col-12">
+                                <button class="btn btn-primary w-100 py-3" type="submit">Login</button>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <p> dont have an account &nbsp<a href="/register">Register</a></p>
+                                    <p> forgot password &nbsp<a href="/forgot-password">reset password</a></p>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+    </div>
+</div>
+<!-- Contact End -->
+
+
+{% include 'footer.html' %}
+
+<script>
+    $("#login_form").submit(function (event) {
+        event.preventDefault();
+        email = $('#email').val();
+        password = $('#password').val();
+
+        if (ValidateEmail(email)) {
+
+            if (password != '') {
+                $.ajax({
+                    headers: { "X-CSRFToken": '{{csrf_token}}' },
+                    type: "POST",
+                    url: "/api/api-register/",
+                    data: {
+                        'email': email,
+                        'password': password,
+                        'action': 2
+                    },
+                    success: (response) => {
+                        response = JSON.parse(response);
+                        if (response.status == 1) {
+                            swal('Success', response.msg, 'success', 'OK');
+                            setTimeout(() => {
+                                window.location.href = "/";
+                            }, 2000)
+                        } else {
+                            swal('Error', response.msg, 'error', 'Close');
+                        }
+                    }
+                });
+            } else {
+                swal('Error', "Please enter your password", 'info', 'close');
+            }
+        } else {
+            swal('Error', "You have entered a invalid address", 'info', 'close');
+        }
+        return false;
+    });
+
+    function ValidateEmail(email) {
+        return email.match(
+            /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        );
+    }
+
+    function swal(title, text, icon, btnText) {
+        Swal.fire({
+            'title': title,
+            'text': text,
+            'icon': icon,
+            'confirmButtonText': btnText
+        })
+    }
+
+</script>

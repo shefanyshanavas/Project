@@ -1,0 +1,332 @@
+{% load static %}
+{% include 'header.html' %}
+
+<!-- Page Header Start -->
+<div class="container-fluid page-header mb-5 p-0" style="background-image: url(img/carousel-bg-2.jpg);">
+    <div class="container-fluid page-header-inner py-5">
+        <div class="container text-center">
+            <h1 class="display-3 text-white mb-3 animated slideInDown">Sales</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb justify-content-center text-uppercase">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#">Pages</a></li>
+                    <li class="breadcrumb-item text-white active" aria-current="page">Sales</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+<!-- Page Header End -->
+
+
+
+
+<div class="container-xxl service py-5">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h6 class="text-primary text-uppercase">// Our Products //</h6>
+            <h1 class="mb-5">Explore Our Bikes</h1>
+        </div>
+        <div class="row g-4 wow fadeInUp mb-4 " data-wow-delay="0.3s">
+            <div class="col-md-3">
+                <div class="form-floating">
+                    <input onchange="invokeSearch($(this).val())" oninput="invokeSearch($(this).val())" type="text"
+                        class="form-control" id="name" placeholder="Your passowrd">
+                    <label for="name">Search...</label>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="form-floating">
+                    <select name="cars" class="form-control" id="cars" onchange="getCityData($(this).val())">
+                        <option disabled selected value="">Select state</option>
+                        {% for data in states %}
+                        <option value='{{data.0}}'>{{data.1}}</option>
+                        {% endfor %}
+                    </select>
+                    <label for="name">Choose State</label>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="form-floating">
+                    <select name="city" class="form-control" id="city">
+                        <option disabled selected value="">Select City</option>
+                    </select>
+                    <label for="name">Choose City</label>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-floating">
+                    <div class="col-12">
+                        <button class="btn btn-primary w-100 py-3" type="submit" onclick="invokeGetBikesByPlaces()">Find
+                            Bikes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row g-4 wow fadeInUp" data-wow-delay="0.3s">
+            <div class="col-lg-12" id="service_show_elm"
+                style="display: flex;row-gap: 25px;justify-content: space-between;flex-wrap: wrap;padding-right: 0;padding-left: 0;">
+                {% for key in payload %}
+                <div class="card">
+                    <div class="imgBox">
+                        <img src="{% static '/image/sales_bikes/' %}{{key.4.0.0}}" alt="{{key.4.0.0}}" class="mouse">
+                    </div>
+                    <div class="contentBox">
+                        <label for="" class="text-light">{{key.3}}</label>
+                        <h3>{{key.1}}</h3>
+                        <h2 class="price"> ₹<small>{{key.2}}</small></h2>
+                        <div>
+                            <a href="/book-sales-bike/{{key.0}}" class="buy">Book</a>
+                            <a href="/view-sales-bike/{{key.0}}" class="buy bg-success">View</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Service End -->
+<!-- Service Start -->
+<div class="container-xxl service py-5">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h1 class="mb-5">Recommended Bikes</h1>
+        </div>
+
+        <div class="row g-4 wow fadeInUp" data-wow-delay="0.3s">
+            <div class="col-lg-12"
+                style="display: flex;row-gap: 25px;justify-content: space-between;flex-wrap: wrap;padding-right: 0;padding-left: 0;">
+                {% for key in recomended %}
+                <div class="card">
+                    <div class="imgBox">
+                        <img src="{% static '/image/sales_bikes/' %}{{key.4.0.0}}" alt="{{key.4.0.0}}" class="mouse">
+                    </div>
+                    <div class="contentBox">
+                        <label for="" class="text-light">{{key.3}}</label>
+                        <h3>{{key.1}}</h3>
+                        <h2 class="price"> ₹<small>{{key.2}}</small></h2>
+                        <div>
+                            <a href="/book-sales-bike/{{key.0}}" class="buy">Book</a>
+                            <a href="/view-sales-bike/{{key.0}}" class="buy bg-success">View</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Service End -->
+
+{% include 'footer.html' %}
+
+<script>
+    function getCityData(state_id) {
+        if (state_id != '' || state_id != null) {
+            invokeAjax({
+                'stateID': state_id,
+                'action': 3,
+                'informAction': 0
+            })
+        }
+    }
+    function appendCityData(response) {
+        $("#city").empty();
+        $('#city').append('<option disabled selected>Select city</option>')
+        if (response.status == 1) {
+            let select_elem = document.getElementById('city');
+            response.data.forEach(element => {
+                let option_elem = document.createElement('option');
+                // Add index to option_elem
+                option_elem.value = element[0];
+                // Add element HTML
+                option_elem.textContent = element[1];
+                // Append option_elem to select_elem
+                select_elem.appendChild(option_elem);
+            });
+        } else {
+            $('#city').append('<option>Empty</option>')
+        }
+    }
+    function invokeGetBikesByPlaces() {
+        cityID = $('#city :selected').val();
+        if (typeof (cityID) != 'undefined') {
+            invokeAjax({
+                'cityID': cityID,
+                'action': 10,
+                'informAction': 2
+            })
+        } else {
+            swal('Error', "Please choose a city", 'info', 'close');
+        }
+    }
+    function invokeAjax(data) {
+        $.ajax({
+            headers: { "X-CSRFToken": '{{csrf_token}}' },
+            type: "POST",
+            url: "/api-register/",
+            data: data,
+            success: (response) => {
+                console
+                response = JSON.parse(response)
+                if (data.informAction == 0) {
+                    appendCityData(response)
+                } else if (data.informAction == 1) {
+                    appendSearchData(response)
+                } else if (data.informAction == 2) {
+                    appendSearchData(response)
+                }
+            },
+        });
+    }
+    function appendSearchData(response) {
+        $("#service_show_elm").empty();
+        if (response.status == 1) {
+            let innerElm = '';
+            response.data.forEach(element => {
+                innerElm = '<div class="card"><div class="imgBox"><img src="{% static "/image/sales_bikes/" %}' + element[4][0] + '" alt="' + element[4][0] + '" class="mouse"></div><div class="contentBox"><label for="" class="text-light">' + element[3] + '</label><h3>' + element[1] + '</h3><h2 class="price"> ₹<small>' + element[2] + '</small></h2><div><a href="/book-sales-bike/' + element[0] + '" class="buy">Book</a><a href="/book-sales-bike/' + element[0] + '" class="buy bg-success">View</a></div></div></div>';
+            });
+            $("#service_show_elm").append(innerElm);
+        } else {
+            $("#service_show_elm").append('<p class="text-danger">' + response.msg + '</p>');
+        }
+
+    }
+    function invokeSearch(text) {
+        if (text != '' || text != null) {
+            invokeAjax({
+                'keyword': text,
+                'action': 11,
+                'informAction': 1
+            })
+        }
+    }
+    function swal(title, text, icon, btnText) {
+        Swal.fire({
+            'title': title,
+            'text': text,
+            'icon': icon,
+            'confirmButtonText': btnText
+        })
+    }
+</script>
+
+<style>
+    @import url("https://fonts.googleapis.com/css2?family=Istok+Web:wght@400;700&display=swap");
+
+    .card {
+        position: relative;
+        width: 320px;
+        height: auto;
+        background: #191919;
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid #D81324;
+    }
+
+    .card::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        width: 100%;
+        height: 100%;
+        background: #D81324;
+        transform: skewY(349deg);
+        transition: 0.5s;
+    }
+
+    .card:hover::before {
+        top: -70%;
+        transform: skewY(390deg);
+    }
+
+    .card::after {
+        content: "CORSAIR";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        font-weight: 600;
+        font-size: 6em;
+        color: rgba(0, 0, 0, 0.1);
+    }
+
+    .card .imgBox {
+        position: relative;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /* padding-top: 20px; */
+        z-index: 1;
+    }
+
+
+    .card .imgBox img {
+        max-width: 100%;
+
+        transition: .5s;
+    }
+
+    .card:hover .imgBox img {
+        max-width: 80%;
+        margin-top: 20px;
+    }
+
+    .card .contentBox {
+        position: relative;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        z-index: 2;
+    }
+
+    .card .contentBox h2 {
+        margin-top: 0 !important;
+    }
+
+    .card .contentBox h3 {
+        font-size: 18px;
+        color: white;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-top: 0 !important;
+    }
+
+    .card .contentBox .price {
+        font-size: 24px;
+        color: white;
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+
+    .card .contentBox .buy {
+        position: relative;
+        top: 100px;
+        opacity: 0;
+        padding: 10px 30px;
+        margin-top: 15px;
+        color: #FFF;
+        text-decoration: none;
+        background: #D81324;
+        border-radius: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: 0.5s;
+    }
+
+    .card:hover .contentBox .buy {
+        top: 0;
+        opacity: 1;
+    }
+
+    .mouse {
+        height: 300px;
+        width: auto;
+    }
+</style>

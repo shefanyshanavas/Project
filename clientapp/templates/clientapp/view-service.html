@@ -1,0 +1,58 @@
+{% load static %}
+
+{% include 'header.html' %}
+
+<!-- Page Header Start -->
+<div class="container-fluid page-header mb-5 p-0" style="background-image: url(img/carousel-bg-1.jpg);">
+    <div class="container-fluid page-header-inner py-5">
+        <div class="container text-center">
+            <h1 class="display-3 text-white mb-3 animated slideInDown">Book service</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb justify-content-center text-uppercase">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#">Services</a></li>
+                    <li class="breadcrumb-item text-white active" aria-current="page">Service Details</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+<!-- Page Header End -->
+<!-- Testimonial Start -->
+<div class="container-xxl py-5 wow fadeInUp" data-wow-delay="0.1s">
+    <div class="container">
+        <div class="text-center">
+            <h6 class="text-primary text-uppercase mb-3">// Service Details //</h6>
+        </div>
+
+        <div class="row" style="background-color: #D81324;padding: 10px 10px;">
+            <div class="col-xl-6 col-md-6 col-lg-6">
+                <img src="{% static 'image/service_list_image/' %}{{payload.2}}" class="w-100" alt="">
+            </div>
+            <div class="col-xl-6 col-md-6 col-lg-6"
+                style="background-color: #D81324;padding: 10px 10px; display: flex;flex-direction: column;justify-content: center;">
+                <div class="product_details">
+                    <h6 class="text-light">{{payload.6}}</h6>
+                    <h3>{{payload.3}}</h3>
+                    <h5 class="text-light mt-3 mb-3">Estimation : ₹ {{payload.4}}</h5>
+
+                    <p class="text-light mb-4">Details : {{payload.5}}</p>
+                    <a href="/book-service/{{payload.0}}" class="btn btn-md btn-success mb-2">Book Now</a>
+                    <address class="text-light mt-2">
+                        Place : {{payload.9}},{{payload.10}} <br>
+                        Phone : {{payload.8}}
+
+                    </address>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+{% include 'footer.html' %}
+<style>
+
+</style>

@@ -1,0 +1,319 @@
+{% load static %}
+{% include 'service_header.html' %}
+
+<!-- ============================================================== -->
+<!-- wrapper  -->
+<!-- ============================================================== -->
+<div class="dashboard-wrapper mt-4">
+    <div class="dashboard-ecommerce">
+        <div class="container-fluid dashboard-content ">
+            <!-- ============================================================== -->
+            <!-- pageheader  -->
+            <!-- ============================================================== -->
+            <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="page-header">
+                        <h2 class="pageheader-title">MotoLogic</h2>
+                        <p class="pageheader-text">Nulla euismod urna eros, sit amet scelerisque torton lectus
+                            vel mauris facilisis faucibus at enim quis massa lobortis rutrum.</p>
+                        <div class="page-breadcrumb">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">Update profile</li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ============================================================== -->
+            <!-- end pageheader  -->
+            <!-- ============================================================== -->
+            <div class="ecommerce-widget">
+
+                <div class="row">
+                    <!-- ============================================================== -->
+                    <!-- basic form -->
+                    <!-- ============================================================== -->
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                        <div class="card">
+                            <h5 class="card-header">Update profile form</h5>
+
+                            <div class="card-body">
+                                <form action="#" id="add_service_form" data-parsley-validate="">
+                                    <div class="form-group">
+                                        <label for="centerName">Email</label>
+                                        <input class="form-control form-control-lg" type="text" disabled
+                                            value="{{ payload.5 }}">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="servName">Joined on</label>
+                                        <input class="form-control form-control-lg" type="text" disabled
+                                            value="{{ payload.9 }}">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="servName">Bussiness Name</label>
+                                        <input class="form-control form-control-lg" id="centerName" type="text"
+                                            placeholder="Enter Bussiness Name" value="{{ payload.1 }}" required
+                                            autocomplete="off">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="servName">Bussiness address</label>
+                                        <input class="form-control form-control-lg" id="address" type="text"
+                                            placeholder="Enter Bussiness address" value="{{ payload.3 }}" required
+                                            autocomplete="off">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="servName">Bussiness phone</label>
+                                        <input class="form-control form-control-lg" id="phone" type="number"
+                                            placeholder="Enter contact number" value="{{ payload.4 }}" required
+                                            autocomplete="off">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="image">Bussiness proof</label>
+                                        <input class="form-control form-control-lg" type="file" id="image"
+                                            onchange="fileValidation()" placeholder="Service Image" autocomplete="off">
+                                    </div>
+
+                                    <div class="mt-3 mb-3" id="imagePreview"><img class="w-50"
+                                            src="{% static 'image/service_centers/' %}{{ payload.7 }}" alt="" srcset="">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="servName">GST No.</label>
+                                        <input class="form-control form-control-lg" id="gstin" type="text"
+                                            placeholder="Enter GST number" value="{{ payload.8 }}" required
+                                            autocomplete="off">
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-sm-6 pl-0">
+                                            <p class="text-right">
+                                                <button type="submit" class="btn btn-space btn-primary">Submit</button>
+
+                                            </p>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ============================================================== -->
+                    <!-- end basic form -->
+                    <!-- ============================================================== -->
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- footer -->
+    <!-- ============================================================== -->
+    <div class="footer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    Copyright © 2018 Concept. All rights reserved. Dashboard by <a
+                        href="https://colorlib.com/wp/">Colorlib</a>.
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="text-md-right footer-links d-none d-sm-block">
+                        <a href="javascript: void(0);">About</a>
+                        <a href="javascript: void(0);">Support</a>
+                        <a href="javascript: void(0);">Contact Us</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- end footer -->
+    <!-- ============================================================== -->
+</div>
+<!-- ============================================================== -->
+<!-- end wrapper  -->
+<!-- ============================================================== -->
+{% include 'service_footer.html' %}
+
+<script>
+    $('#add_service_form').submit((e) => {
+        e.preventDefault();
+        centerName = $("#centerName").val();
+        address = $("#address").val();
+        phone = $("#phone").val();
+        gstin = $("#gstin").val();
+
+        if (centerName.length > 2) {
+            if (ValidateAddress(address)) {
+                if (ValidateMobile(phone)) {
+                    if (validateGstin(gstin)) {
+                        if ($("#image").val() == '') {
+                            // basic profile updation.
+                            $.ajax({
+                                headers: { "X-CSRFToken": '{{csrf_token}}' },
+                                type: "POST",
+                                url: "/service-api/api-register/",
+                                data: {
+                                    'centerName': centerName,
+                                    'address': address,
+                                    'phone': phone,
+                                    'gstin': gstin,
+                                    'action': '18',
+                                    'type': 0
+                                },
+                                success: (response) => {
+                                    response = JSON.parse(response)
+                                    if (response.status == 1) {
+                                        swal('Success', response.msg, 'success', 'OK');
+                                        setTimeout(() => {
+                                            location.reload()
+                                        }, 2000)
+                                    } else {
+                                        swal('Error', response.msg, 'error', 'Close');
+                                    }
+                                },
+
+                            });
+                        } else {
+                            // profile updation with proof
+                            if (fileValidation()) {
+                                var data;
+                                formData = new FormData();
+                                formData.append('file', $('#image')[0].files[0]);
+                                formData.append("centerName", centerName)
+                                formData.append("address", address);
+                                formData.append("phone", phone);
+                                formData.append("gstin", gstin);
+                                formData.append("action", 18);
+                                formData.append('type', 1)
+                                $.ajax({
+                                    headers: { "X-CSRFToken": '{{csrf_token}}' },
+                                    type: "POST",
+                                    url: "/service-api/api-register/",
+                                    data: formData,
+                                    processData: false, // important
+                                    contentType: false, // important
+                                    success: (response) => {
+                                        response = JSON.parse(response)
+                                        if (response.status == 1) {
+                                            swal('Success', response.msg, 'success', 'OK');
+                                            setTimeout(() => {
+                                                window.location.href = "/service-center/login";
+                                            }, 2000)
+                                        } else {
+                                            swal('Error', response.msg, 'error', 'Close');
+                                        }
+                                    },
+
+                                });
+                            }
+                        }
+                    } else {
+                        swal('Error', 'Please enter a valid gstin', 'info', 'close');
+                    }
+                } else {
+                    swal('Error', 'Please enter a valid 10 digit contact number', 'info', 'close');
+                }
+            } else {
+                swal('Error', 'Please enter a valid address', 'info', 'close');
+            }
+        } else {
+            swal('Error', 'Please enter valid service center name', 'info', 'close');
+        }
+
+        return false;
+    })
+
+    function ValidateAddress(address) {
+        if (/^[a-z0-9\s,'-]*$/i.test(address)) {
+            return (true)
+        } else {
+            return (false)
+        }
+    }
+    function validateGstin(gstin_no) {
+        if (/^([0-2][0-9]|[3][0-7])[A-Z]{3}[ABCFGHLJPTK][A-Z]\d{4}[A-Z][A-Z0-9][Z][A-Z0-9]$/.test(gstin_no)) {
+            return true
+        } else {
+            return false
+        }
+    }
+    function ValidateMobile(number) {
+        if (/^(0|91)?[6-9][0-9]{9}$/.test(number)) {
+            return (true)
+        } else {
+            return (false)
+        }
+    }
+
+    function validatePassword(p, p1) {
+        errors = [];
+        if (p.length < 8) {
+            errors.push("Your password must be at least 8 characters");
+        }
+        if (p.search(/[a-z]/i) < 0) {
+            errors.push("Your password must contain at least one letter.");
+        }
+        if (p.search(/[0-9]/) < 0) {
+            errors.push("Your password must contain at least one digit.");
+        }
+        if (p != p1) {
+            errors.push("Your password and confirm password not match");
+        }
+
+        if (errors.length > 0) {
+            swal('Error', errors.join("\n"), 'info', 'close');
+            return false;
+        } else {
+            return true;
+        }
+    }
+    function swal1(title, text, icon, btnText) {
+        Swal.fire({
+            'title': title,
+            'text': text,
+            'icon': icon,
+            'confirmButtonText': btnText
+        })
+    }
+    function swal(title, text, icon, btnText) {
+        alert(text)
+    }
+    function fileValidation() {
+        var fileInput =
+            document.getElementById('image');
+        var filePath = fileInput.value;
+
+        // Allowing file type
+        var allowedExtensions =
+            /(\.jpg|\.jpeg|\.png|\.pdf)$/i;
+
+        if (!allowedExtensions.exec(filePath)) {
+            swal('Error', 'Please upload a valid id proof.Allowed JPEG,JPG,PNG,PDF', 'error', 'close');
+            fileInput.value = '';
+            return false;
+        }
+        else {
+            // Image preview
+            if (fileInput.files && fileInput.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById(
+                        'imagePreview').innerHTML =
+                        '<img class="w-50" src="' + e.target.result
+                        + '"/>';
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+            return true
+        }
+    }
+</script>

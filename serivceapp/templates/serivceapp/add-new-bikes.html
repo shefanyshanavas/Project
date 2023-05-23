@@ -1,0 +1,244 @@
+{% load static %}
+{% include 'service_header.html' %}
+
+<!-- ============================================================== -->
+<!-- wrapper  -->
+<!-- ============================================================== -->
+<div class="dashboard-wrapper mt-4">
+    <div class="dashboard-ecommerce">
+        <div class="container-fluid dashboard-content ">
+            <!-- ============================================================== -->
+            <!-- pageheader  -->
+            <!-- ============================================================== -->
+            <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="page-header">
+                        <h2 class="pageheader-title">MotoLogic</h2>
+                        <p class="pageheader-text">Nulla euismod urna eros, sit amet scelerisque torton lectus
+                            vel mauris facilisis faucibus at enim quis massa lobortis rutrum.</p>
+                        <div class="page-breadcrumb">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">Add new Bikes</li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ============================================================== -->
+            <!-- end pageheader  -->
+            <!-- ============================================================== -->
+            <div class="ecommerce-widget">
+
+                <div class="row">
+                    <!-- ============================================================== -->
+                    <!-- basic form -->
+                    <!-- ============================================================== -->
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                        <div class="card">
+                            <h5 class="card-header">Add new bike</h5>
+                            <div class="card-body">
+                                <form action="#" id="add_service_form" data-parsley-validate="">
+                                    <select class="form-group form-control" name="brand_id" id="brand_id">
+                                        <option disabled selected value="">Select brand</option>
+                                        {% for data in brand_data %}
+                                        <option value='{{data.0}}'>{{data.1}}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="form-group">
+                                        <label for="bikeName">Bike Name</label>
+                                        <input id="bikeName" type="text" name="bikeName" data-parsley-trigger="change"
+                                            required="" placeholder="Enter bike name" autocomplete="off"
+                                            class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="image">Bike Image[multiple files can be upload]</label>
+                                        <input class="form-control form-control-lg" type="file" id="bikeImage"
+                                            onchange="imageTest(this)" required="" placeholder="select bike images"
+                                            autocomplete="off" multiple name="bikeImage[]">
+                                    </div>
+
+                                    <div class="mt-3 mb-3" id="imagePreview"></div>
+
+                                    <div class="form-group">
+                                        <label for="mrp_price">MRP Price</label></label>
+                                        <input id="mrp_price" type="number" name="mrp_price" step="0.01"
+                                            data-parsley-trigger="change" placeholder="Enter onroad price"
+                                            autocomplete="off" class="form-control">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="adv_amt">Minimum Advance amount</label>
+                                        <input id="adv_amt" type="number" name="adv_amt" step="0.01"
+                                            data-parsley-trigger="change" placeholder="Enter minimum advance amount"
+                                            autocomplete="off" class="form-control">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="stock">Stock</label>
+                                        <input id="stock" type="number" name="stock" step="0"
+                                            data-parsley-trigger="change" placeholder="Enter stock quantity"
+                                            autocomplete="off" class="form-control">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="descr">Description</label>
+                                        <input id="descr" type="text" name="descr" data-parsley-trigger="change"
+                                            placeholder="Enter bike description" autocomplete="off"
+                                            class="form-control">
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-sm-6 pl-0">
+                                            <p class="text-right">
+                                                <button type="submit" class="btn btn-space btn-primary">Submit</button>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ============================================================== -->
+                    <!-- end basic form -->
+                    <!-- ============================================================== -->
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- footer -->
+    <!-- ============================================================== -->
+    <div class="footer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    Copyright © 2018 Concept. All rights reserved. Dashboard by <a
+                        href="https://colorlib.com/wp/">Colorlib</a>.
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="text-md-right footer-links d-none d-sm-block">
+                        <a href="javascript: void(0);">About</a>
+                        <a href="javascript: void(0);">Support</a>
+                        <a href="javascript: void(0);">Contact Us</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- end footer -->
+    <!-- ============================================================== -->
+</div>
+<!-- ============================================================== -->
+<!-- end wrapper  -->
+<!-- ============================================================== -->
+{% include 'service_footer.html' %}
+
+<script>
+    $('#add_service_form').submit((e) => {
+        e.preventDefault();
+        brandId = $("#brand_id option:selected").val();
+        bikeName = $('#bikeName').val()
+        mrp_price = $('#mrp_price').val()
+        adv_amt = $('#adv_amt').val()
+        stock = $('#stock').val()
+        descr = $('#descr').val()
+        // bikeImage
+        if (brandId > 0) {
+            if (bikeName.length > 2) {
+                if (mrp_price > 9999) {
+                    if (adv_amt > 999) {
+                        if (stock > 9) {
+                            if (descr.length > 9) {
+                                var data;
+                                formData = new FormData();
+                                var ins = document.getElementById('bikeImage').files.length;
+                                for (var x = 0; x < ins; x++) {
+                                    formData.append("bike_images", document.getElementById('bikeImage').files[x]);
+                                }
+                                formData.append("brandId", brandId)
+                                formData.append("bikeName", bikeName)
+                                formData.append("mrp_price", mrp_price);
+                                formData.append("adv_amt", adv_amt);
+                                formData.append("stock", stock);
+                                formData.append("descr", descr);
+                                formData.append("action", 12);
+                                $.ajax({
+                                    headers: { "X-CSRFToken": '{{csrf_token}}' },
+                                    type: "POST",
+                                    url: "/service-api/api-register/",
+                                    data: formData,
+                                    processData: false, // important
+                                    contentType: false, // important
+                                    success: (response) => {
+                                        response = JSON.parse(response)
+                                        if (response.status == 1) {
+                                            swal('Success', response.msg, 'success', 'OK');
+                                            $("#add_service_form").trigger('reset')
+                                        } else {
+                                            swal('Error', response.msg, 'error', 'Close');
+                                        }
+                                    },
+                                });
+                            } else {
+                                swal('Error', 'Please enter valid description. minimum description length 10', 'info', 'close');
+                            }
+                        } else {
+                            swal('Error', 'Please enter valid stock quantity. minimum 10', 'info', 'close');
+                        }
+                    } else {
+                        swal('Error', 'Please enter valid advance amount. minimum ₹1000', 'info', 'close');
+                    }
+                } else {
+                    swal('Error', 'Please enter valid bike price. minimum ₹10000', 'info', 'close');
+                }
+            } else {
+                swal('Error', 'Please enter valid bike name', 'info', 'close');
+            }
+        } else {
+            swal('Error', 'Please select a brand name', 'info', 'close');
+        }
+        return false;
+    })
+
+    function imageTest(field) {
+        $("#imagePreview").empty()
+        var regex = /(\.jpg|\.jpeg|\.png|\.gif)$/i; // Check file type .jpg, .jpeg, .png, .gif etc.
+        var fileInput = document.getElementById('bikeImage');
+        // We need only file name so use field.files[0].name instead of field.value
+        // Image validation when you select multiple images at once
+        for (var i = 0; i < field.files.length; i++) {
+            var fieldName = field.files[i].name; // Guess file name = xyz.png 
+            // Check file type is correct or not
+            if (fieldName.match(regex)) {
+                // console.log(field.files[i])
+                var reader = new FileReader();
+                reader.onload = function (e) {
+
+                    $('<img class="w-50" src="' + e.target.result
+                        + '"/>').appendTo("#imagePreview");
+                };
+                reader.readAsDataURL(field.files[i]);
+            }
+            else {
+                swal('Error', 'This ' + fieldName + ' is invalid..', 'info', 'close');
+                field.setCustomValidity('This ' + fieldName + ' is invalid..');
+            }
+        } //End for loop
+    } // End function
+    function swal(title, text, icon, btnText) {
+        Swal.fire({
+            'title': title,
+            'text': text,
+            'icon': icon,
+            'confirmButtonText': btnText
+        })
+    }
+   
+</script>

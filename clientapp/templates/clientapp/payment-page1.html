@@ -1,0 +1,101 @@
+<button id="rzp-button1">Complete Payment</button>
+<p id="notify"></p>
+<input type="hidden" id="book_id" value="{{payload.last_insertid}}">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM="
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- {{payload}} -->
+<script>
+    var options = {
+        "key": "rzp_test_8V6ZYNb2sa2dAr", // Enter the Key ID generated from the Dashboard
+        "amount": parseInt('{{payload.payment_data.amount}}'), // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+        "currency": "INR",
+        "name": '{{payload.billing_data.2}}',
+        "description": "Test Transaction",
+        "image": "https://example.com/your_logo",
+        "order_id": '{{payload.payment_data.id}}', //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+        "callback_url": "/confirm-payment",
+
+        "prefill": {
+            "name": '{{payload.billing_data.2}}',
+            "email": '{{payload.billing_data.3}}',
+            "contact": '{{payload.billing_data.4}}',
+        },
+        "handler": function (response) {
+            booking_id = '{{payload.billing_data.0}}'
+            razorpay_signature = response.razorpay_signature
+            razorpay_payment_id = response.razorpay_payment_id
+            razorpay_order_id = response.razorpay_order_id
+            order_id = '{{payload.payment_data.id}}'
+            $.ajax({
+                headers: { "X-CSRFToken": '{{csrf_token}}' },
+                type: "POST",
+                url: "/api/api-register/",
+                data: {
+                    'action': 17,
+                    'booking_id': booking_id,
+                    'razorpay_signature': razorpay_signature,
+                    'razorpay_payment_id': razorpay_payment_id,
+                    'razorpay_order_id': razorpay_order_id
+                },
+                success: (response) => {
+                    response = JSON.parse(response)
+                    if (response.status == 1) {
+                        swal('Success', response.msg, 'success', 'OK');
+                        setTimeout(() => {
+                            window.location.href = "/profile-view";
+                        }, 2000)
+                    } else {
+                        swal('Error', response.msg, 'error', 'Close');
+                    }
+                },
+                beforeSend: () => {
+                    $('#notify').html('Please wait... we are verifiying your payment. proccessing your order.')
+                    swal('Please wait...', 'we are verifiying your payment. proccessing your order.', 'info', 'ok');
+                }
+            });
+        },
+        "notes": {
+            "address": "Motologic online store"
+        },
+        "theme": {
+            "color": "#3399cc"
+        }
+    };
+    var rzp1 = new Razorpay(options);
+    rzp1.on('payment.failed', function (response) {
+        alert(response.error.code);
+        alert(response.error.description);
+        alert(response.error.source);
+        alert(response.error.step);
+        alert(response.error.reason);
+        alert(response.error.metadata.order_id);
+        alert(response.error.metadata.payment_id);
+    });
+    document.getElementById('rzp-button1').onclick = function (e) {
+        rzp1.open();
+        e.preventDefault();
+    }
+    function swal(title, text, icon, btnText) {
+        Swal.fire({
+            'title': title,
+            'text': text,
+            'icon': icon,
+            'confirmButtonText': btnText
+        })
+    }
+</script>
+<style>
+    #rzp-button1 {
+        padding: 15px 25px;
+        font-size: 30px;
+        background-color: lightgreen;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border: none;
+        border-radius: 20px;
+    }
+</style>
